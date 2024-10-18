@@ -32,46 +32,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { SystemStore } from '@/store/modules/System'
-import logo from '@/assets/images/logo.svg'
-import AsideNav from '@/components/AsideNav/Index.vue'
-import NavStuats from '@/components/NavStuats/Index.vue'
-import ImgView from '@/components/ImgView/Index.vue'
+import { ref } from "vue";
+import { SystemStore } from "@/store/modules/System";
+import logo from "@/assets/images/logo.svg";
+import AsideNav from "@/components/AsideNav/Index.vue";
+import NavStuats from "@/components/NavStuats/Index.vue";
+import ImgView from "@/components/ImgView/Index.vue";
 
-import AboutPage from '@/views/AboutPage/Index.vue'
-import AcgPage from '@/views/AcgPage/Index.vue'
-import CollectionPage from '@/views/CollectionPage/Index.vue'
-import DownloadPage from '@/views/DownloadPage/Index.vue'
-import HotPage from '@/views/HotPage/Index.vue'
-import PeoplePage from '@/views/PeoplePage/Index.vue'
+import AboutPage from "@/views/AboutPage/Index.vue";
+import UpdateLog from "@/views/UpdateLog/Index.vue";
+import AcgPage from "@/views/AcgPage/Index.vue";
+import CollectionPage from "@/views/CollectionPage/Index.vue";
+import DownloadPage from "@/views/DownloadPage/Index.vue";
+import HotPage from "@/views/HotPage/Index.vue";
+import PeoplePage from "@/views/PeoplePage/Index.vue";
 
-const SystemPinia = SystemStore()
-const view = ref({})
+const SystemPinia = SystemStore();
+const view = ref({});
 SystemPinia.$subscribe(
   (mutation, state) => {
     if (state?.nowImgView?.url) {
-      view.value = state.nowImgView
+      view.value = state.nowImgView;
     }
   },
   { detached: false }
-)
+);
 
-let title = ref('热门推荐')
-let component = ref(HotPage)
-let cname = ref('HotPage')
-const include = ['people', 'acg', 'hot']
+let title = ref("热门推荐");
+// let component = ref(AboutPage);
+let component = ref(UpdateLog);
+// let component = ref(HotPage)
+let cname = ref("HotPage");
+const include = ["people", "acg", "hot"];
 
 const handleSelect = (value) => {
-  console.log('value', value)
-  title.value = value.title
-  component.value = value.component
-  cname.value = value.cname
-}
+  console.log("value", value);
+  title.value = value.title;
+  component.value = value.component;
+  cname.value = value.cname;
+};
 
 const handleImgView = (value) => {
-  console.log('value', value)
-}
+  console.log("value", value);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -151,7 +154,7 @@ const handleImgView = (value) => {
       background-image: url(@/assets/images/sc-bg.png);
     }
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       width: 100vw;
       height: 100vh;
