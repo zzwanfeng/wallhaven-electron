@@ -22,92 +22,100 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
-import { SystemStore } from '@/store/modules/System'
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { SystemStore } from "@/store/modules/System";
 
-const emit = defineEmits()
+const emit = defineEmits();
 
-import AboutPage from '@/views/AboutPage/Index.vue'
-import AcgPage from '@/views/AcgPage/Index.vue'
-import CollectionPage from '@/views/CollectionPage/Index.vue'
-import DownloadPage from '@/views/DownloadPage/Index.vue'
-import HotPage from '@/views/HotPage/Index.vue'
-import PeoplePage from '@/views/PeoplePage/Index.vue'
+import AboutPage from "@/views/AboutPage/Index.vue";
+import UpdateLog from "@/views/UpdateLog/Index.vue";
+import AcgPage from "@/views/AcgPage/Index.vue";
+import CollectionPage from "@/views/CollectionPage/Index.vue";
+import DownloadPage from "@/views/DownloadPage/Index.vue";
+import HotPage from "@/views/HotPage/Index.vue";
+import PeoplePage from "@/views/PeoplePage/Index.vue";
 
 const nav = [
   {
-    lable: '在线壁纸',
+    lable: "在线壁纸",
     childer: [
       {
-        id: 'hot',
-        lable: '热门推荐',
-        icon: 'icon-remen',
+        id: "hot",
+        lable: "热门推荐",
+        icon: "icon-remen",
         component: HotPage,
-        cname: 'HotPage',
+        cname: "HotPage",
       },
       {
-        id: 'acg',
-        lable: '动漫精选',
+        id: "acg",
+        lable: "动漫精选",
         component: AcgPage,
-        cname: 'AcgPage',
-        icon: 'icon-erciyuan',
+        cname: "AcgPage",
+        icon: "icon-erciyuan",
       },
       {
-        id: 'people',
-        lable: '人物精选',
-        icon: 'icon-meinv',
+        id: "people",
+        lable: "人物精选",
+        icon: "icon-meinv",
         component: PeoplePage,
-        cname: 'PeoplePage',
+        cname: "PeoplePage",
       },
     ],
   },
   {
-    lable: '我的壁纸',
+    lable: "我的壁纸",
     childer: [
       {
-        id: 'my',
-        lable: '我的收藏',
-        icon: 'icon-collection-b',
+        id: "my",
+        lable: "我的收藏",
+        icon: "icon-collection-b",
         component: CollectionPage,
-        cname: 'CollectionPage',
+        cname: "CollectionPage",
       },
       {
-        id: 'down',
-        lable: '下载中心',
+        id: "down",
+        lable: "下载中心",
         component: DownloadPage,
-        cname: 'DownloadPage',
-        icon: 'icon-xiazai',
+        cname: "DownloadPage",
+        icon: "icon-xiazai",
       },
     ],
   },
   {
-    lable: '更多',
+    lable: "更多",
     childer: [
       {
-        id: 'about',
-        lable: '关于',
+        id: "updateLog",
+        lable: "更新日志",
+        component: UpdateLog,
+        cname: "UpdateLog",
+        icon: "icon-guanyu",
+      },
+      {
+        id: "about",
+        lable: "关于",
         component: AboutPage,
-        cname: 'AboutPage',
-        icon: 'icon-guanyu',
+        cname: "AboutPage",
+        icon: "icon-guanyu",
       },
     ],
   },
-]
+];
 
-let actice = ref('hot')
+let actice = ref("hot");
 
-const SystemPinia = SystemStore()
-const downFiles = SystemPinia?.getAllDownFiles ?? []
+const SystemPinia = SystemStore();
+const downFiles = SystemPinia?.getAllDownFiles ?? [];
 
 const handleSelect = (i) => {
-  actice.value = i.id
-  emit('selectMenu', {
+  actice.value = i.id;
+  emit("selectMenu", {
     component: i.component,
     title: i.lable,
     cname: i.cname,
-  })
-}
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -139,7 +147,7 @@ const handleSelect = (i) => {
       margin: 0 18px;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         bottom: 0;
         height: 2px;
