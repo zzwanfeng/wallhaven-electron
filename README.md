@@ -1,16 +1,24 @@
-# package
+# Vue 3 + TypeScript + Vite
 
-Vite 需要 Node.js 版本 >= 12.0.0。
+This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-electron-builder：打包工具
+## Recommended IDE Setup
 
-concurrently：阻塞运行多个命令，-k 参数用来清除其它已经存在或者挂掉的进程
-wait-on：等待资源，此处用来等待 url 可访问
+- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-cross-env:运行跨平台设置和使用环境变量(Node 中的环境变量)的脚本
+## Type Support For `.vue` Imports in TS
 
-yarn electron 为等待 tcp 协议 3000 端口可访问，然后执行 electron
-yarn electron:serve 为阻塞执行开发服务器运行和 npm run electron 命令
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
 
-github 下载超时
-手动下载后，放到 C:\Users\user\AppData\Local\electron\Cache
+If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+
+1. Disable the built-in TypeScript Extension
+   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
+   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
+2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+
+## plugins
+
+- unplugin-vue-components([https://github.com/unplugin/unplugin-vue-components]): 按需自动导入 Vue 组件。ui(Element-ui)库,vue hooks 等.unplugin-vue-components/resolvers
+
+## package
