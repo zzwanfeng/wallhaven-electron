@@ -60,8 +60,8 @@ SystemPinia.$subscribe(
 
 let title = ref("热门推荐");
 // let component = ref(AboutPage);
-let component = ref(UpdateLog);
-// let component = ref(HotPage)
+// let component = ref(UpdateLog);
+let component = ref(HotPage);
 let cname = ref("HotPage");
 const include = ["people", "acg", "hot"];
 

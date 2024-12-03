@@ -16,6 +16,7 @@
     "electron-edge-js": "^19.0.0",
     "element-plus": "^2.2.17",
     "install": "^0.13.0",
+    "node-gyp": "^10.3.1",
     "npm": "^8.19.2",
     "pinia": "^2.0.22",
     "vue": "^3.2.37",
