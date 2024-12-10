@@ -8,7 +8,7 @@ export const getTime = () => {
 
 
 /**
-* 存储单位换算
+* 存储单位换算 import { byte } from "@/utils/util";
 * @param {*} bytes  
 */
 export const byte = (bytes) => {

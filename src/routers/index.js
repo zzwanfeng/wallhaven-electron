@@ -1,13 +1,12 @@
-import VueRouter from "vue-router";
-import Vue from "vue";
-import layout from "../layouts/main"
+import layout from "../layouts/Index"
+
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 // import recommendImg from '../assets/nav/recommend.png'
 // import wallpaperImg from '../assets/nav/wallpaper.png'
 // import componentImg from '../assets/nav/component.png'
 // import myImg from '../assets/nav/my.png'
 
 
-Vue.use(VueRouter);
 
 export const routes = [
   {
@@ -115,7 +114,7 @@ export const routes = [
     ]
   },
   {
-    path: "*",
+    path: "/:catchAll(.*)",
     meta: {
       hide: true
     },
@@ -129,9 +128,18 @@ export const routes = [
   }
 ]
 
-const router = new VueRouter({
-  mode: "hash",
-  routes: routes,
-})
+// const router = new VueRouter({
+//   mode: "hash",
+//   routes: routes,
+// })
 
-export default router
+// export default router
+
+const router = createRouter({
+  // history: createWebHistory(process.env.BASE_URL),
+  // history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  routes,
+});
+
+export default router;

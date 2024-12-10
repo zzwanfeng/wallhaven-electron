@@ -1,14 +1,90 @@
 @font-face {
   font-family: "iconfont";
   src        : url('iconfont.ttf')
-    /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
-
 }
-
+  
 .iconfont {
   font-family: "iconfont" !important;
   font-size  : 16px;
   font-style : normal;
+}
+
+
+
+.icon-zuixiaohua:before {
+  content: "\e622";
+}
+
+.icon-refresh:before {
+  content: "\e607";
+}
+
+.icon-zhuomian:before {
+  content: "\e6c2";
+}
+
+.icon-fanhui:before {
+  content: "\e68b";
+}
+
+.icon-xiazai:before {
+  content: "\ee31";
+}
+
+.icon-mohuchaxun:before {
+  content: "\e692";
+}
+
+.icon-shouqi:before {
+  content: "\e608";
+}
+
+.icon-shaixuan-zhankai:before {
+  content: "\e610";
+}
+
+.icon-guanyu1:before {
+  content: "\e60b";
+}
+
+.icon-shezhi:before {
+  content: "\e8b7";
+}
+
+.icon-xitongrizhi:before {
+  content: "\e6a9";
+}
+
+.icon-a-huaban2fuben9:before {
+  content: "\e60f";
+}
+
+.icon-caidan:before {
+  content: "\e602";
+}
+
+.icon-guanbi:before {
+  content: "\e7af";
+}
+
+.icon-shanchu:before {
+  content: "\e695";
+}
+
+.icon-xitongshezhi:before {
+  content: "\e618";
+}
+
+.icon-lianxi2hebing_diannao:before {
+  content: "\e62c";
+}
+
+.icon-reindeer__easyiconnet-copy:before {
+  content: "\e604";
+}
+
+.icon-icon-test3:before {
+  content: "\e603";
 }
 
 .icon-bofang:before {
@@ -29,10 +105,6 @@
 
 .icon-tupian:before {
   content: "\e626";
-}
-
-.icon-xiazai:before {
-  content: "\e646";
 }
 
 .icon-kaishi:before {
@@ -61,14 +133,6 @@
 
 .icon-remen:before {
   content: "\e6b2";
-}
-
-.icon-zuixiaohua:before {
-  content: "\e629";
-}
-
-.icon-guanbi:before {
-  content: "\e602";
 }
 
 .icon-shoucang:before {
@@ -102,3 +166,4 @@
 .icon-quanxian:before {
   content: "\e7ae";
 }
+
