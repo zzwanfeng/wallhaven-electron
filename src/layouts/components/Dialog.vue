@@ -13,61 +13,74 @@
     </div>
   </div>
 </template>
-<script>
+
+<script setup>
 import hotkeys from "hotkeys-js";
 
-export default {
-  name: "OneDialog",
-  props: {
-    width: String,
-    title: String,
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    appendToBody: {
-      type: Boolean,
-      default: false,
-    },
-    closeOnClickModal: {
-      type: Boolean,
-      default: true,
-    },
-    closeOnPressEscape: {
-      type: Boolean,
-      default: true,
-    },
+const props = defineProps({
+  width: {
+    type: String,
+    default: 0,
   },
-  watch: {
-    visible(val) {
-      if (val) {
-        if (this.closeOnPressEscape) hotkeys("esc", this.close);
-        if (this.appendToBody) document.body.appendChild(this.$el);
-      } else {
-        hotkeys.unbind("esc", this.close);
+  title: {
+    type: String,
+    default: "",
+  },
+  visible: {
+    type: Boolean,
+    default: false,
+  },
+  appendToBody: {
+    type: Boolean,
+    default: false,
+  },
+  closeOnClickModal: {
+    type: Boolean,
+    default: true,
+  },
+  closeOnPressEscape: {
+    type: Boolean,
+    default: true,
+  },
+});
+const emit = defineEmits(["update:visible"]);
+
+watch(
+  () => props.visible,
+  (newValue, oldValue) => {
+    if (newValue) {
+      if (props.closeOnPressEscape) {
+        hotkeys("esc", close);
       }
-    },
-  },
-  mounted() {
-    if (this.visible) {
-      if (this.closeOnPressEscape) hotkeys("esc", this.close);
-      if (this.appendToBody) document.body.appendChild(this.$el);
+      if (props.appendToBody) {
+        document.body.appendChild(this.$el);
+      }
+    } else {
+      hotkeys.unbind("esc", close);
     }
-  },
-  destroyed() {
-    if (this.appendToBody && this.$el && this.$el.parentNode) {
-      this.$el.parentNode.removeChild(this.$el);
-    }
-  },
-  methods: {
-    close(type) {
-      if (type === "mask" && !this.closeOnClickModal) return;
-      this.$emit("update:visible", false);
-    },
-  },
+  }
+);
+
+const close = (type) => {
+  if (type === "mask" && !props.closeOnClickModal) return;
+  emit("update:visible", false);
 };
+
+onMounted(() => {
+  if (this.visible) {
+    if (this.closeOnPressEscape) hotkeys("esc", this.close);
+    if (this.appendToBody) document.body.appendChild(this.$el);
+  }
+});
+
+onDestroyed(() => {
+  if (this.appendToBody && this.$el && this.$el.parentNode) {
+    this.$el.parentNode.removeChild(this.$el);
+  }
+});
 </script>
-<style lang="less" scoped>
+
+<style lang="scss" scoped>
 .one-dialog-wrapper {
   position: fixed;
   top: 0;

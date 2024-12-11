@@ -9,27 +9,15 @@ declare module 'vue' {
   export interface GlobalComponents {
     AsideNav: typeof import('./components/AsideNav/Index.vue')['default']
     ContextMenu: typeof import('./components/context-menu.vue')['default']
-    ElBadge: typeof import('element-plus/es')['ElBadge']
-    ElCard: typeof import('element-plus/es')['ElCard']
-    ElCheckboxButton: typeof import('element-plus/es')['ElCheckboxButton']
-    ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
-    ElInput: typeof import('element-plus/es')['ElInput']
-    ElOption: typeof import('element-plus/es')['ElOption']
-    ElProgress: typeof import('element-plus/es')['ElProgress']
-    ElSelect: typeof import('element-plus/es')['ElSelect']
-    ElTimeline: typeof import('element-plus/es')['ElTimeline']
-    ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     EmptyPage: typeof import('./components/EmptyPage/Index.vue')['default']
     ImgList: typeof import('./components/ImgList/Index.vue')['default']
     ImgListHorizontal: typeof import('./components/ImgListHorizontal/Index.vue')['default']
+    ImgPlus: typeof import('./components/ImgPlus/Index.vue')['default']
     ImgView: typeof import('./components/ImgView/Index.vue')['default']
     NavStuats: typeof import('./components/NavStuats/Index.vue')['default']
     OneTitle: typeof import('./components/OneTitle/Index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchList: typeof import('./components/SearchList/Index.vue')['default']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

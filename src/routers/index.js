@@ -12,34 +12,35 @@ export const routes = [
   {
     path: "/",
     component: layout,
+    redirect: "/hotPage",
     meta: {
       title: "在线壁纸",
       // icon: recommendImg
     },
     children: [
       {
-        path: "/",
-        name: "热门推荐",
+        path: "/hotPage",
+        name: "hotPage",
         meta: {
           title: "推荐",
         },
-        component: () => import("@/views/HotPage/Index.vue")
+        component: () => import("@/views/hotPage/Index.vue")
       },
       {
-        path: "/AcgPage",
-        name: "动漫精选",
+        path: "/acgPage",
+        name: "acgPage",
         meta: {
           title: "推荐",
         },
-        component: () => import("@/views/AcgPage/Index.vue")
+        component: () => import("@/views/acgPage/Index.vue")
       },
       {
-        path: "/PeoplePage",
-        name: "人物精选",
+        path: "/peoplePage",
+        name: "peoplePage",
         meta: {
           title: "推荐",
         },
-        component: () => import("@/views/PeoplePage/Index.vue")
+        component: () => import("@/views/peoplePage/Index.vue")
       }
     ]
   },
@@ -52,20 +53,20 @@ export const routes = [
     },
     children: [
       {
-        path: "/CollectionPage",
-        name: "CollectionPage",
+        path: "/collectionPage",
+        name: "collectionPage",
         meta: {
           title: "我的收藏",
         },
-        component: () => import("@/views/CollectionPage/Index.vue")
+        component: () => import("@/views/collectionPage/Index.vue")
       },
       {
-        path: "/DownloadPage",
-        name: "DownloadPage",
+        path: "/downloadPage",
+        name: "downloadPage",
         meta: {
           title: "下载中心",
         },
-        component: () => import("@/views/DownloadPage/Index.vue")
+        component: () => import("@/views/my/downloadPage/Index.vue")
       }
     ]
   },
@@ -101,15 +102,15 @@ export const routes = [
         meta: {
           title: "更新日志",
         },
-        component: () => import("@/views/UpdateLog/Index.vue")
+        component: () => import("@/views/updateLog/Index.vue")
       },
       {
-        path: "/AboutPage",
-        name: "AboutPage",
+        path: "/aboutPage",
+        name: "aboutPage",
         meta: {
           title: "关于",
         },
-        component: () => import("@/views/AboutPage/Index.vue")
+        component: () => import("@/views/aboutPage/Index.vue")
       },
     ]
   },
@@ -121,7 +122,7 @@ export const routes = [
     component: layout,
     children: [
       {
-        path: "/",
+        path: "/:catchAll(.*)",
         component: () => import("@/views/empty/Index.vue")
       }
     ]

@@ -1,101 +1,76 @@
-import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 
-const isLogin = (url) => {
-  return new Promise((resolve, reject) => {
-    const baseURL = "https://acgn.zzhvv.com/serviceAcgn/novel/getWallpaperIsLogin";
+const request = axios.create({
+  baseURL: 'https://wallhaven.cc/api/v1/',
+  timeout: 60 * 1000,
+  // transformResponse 允许自定义原始的响应数据（字符串）
+  // transformResponse: [function (data) {
+  //   try {
+  //     // 如果转换成功则返回转换的数据结果
+  //     // const json = jsonBig({ storeAsString: true })
+  //     // return json.parse(data)
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', baseURL);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState !== 4) return;
-      if (xhr.status === 200 || xhr.status === 304) {
-        try {
-          resolve(JSON.parse(xhr.responseText));
-        } catch (error) {
-          resolve(xhr.responseText);
-        }
-      } else {
-        reject(new Error(xhr.responseText));
-      }
+  //     return parse({
+  //       storeAsString: true
+  //     })(data, undefined)
+  //   } catch (err) {
+  //     // 如果转换失败，则包装为统一数据格式并返回
+  //     return JSON.parse(data)
+  //   }
+  // }]
+})
+
+
+
+window.axiosPromiseArr = [] // axios中设置放置要取消的对象
+
+
+// request interceptor
+request.interceptors.request.use(config => {
+  if (config.method === 'get') {
+  }
+  config.params = {
+    t: Date.parse(new Date()) / 1000,
+    ...config.params
+  }
+
+  if (!config.headers['Content-Type']) {
+    config.headers['Content-Type'] = 'application/json'
+  }
+
+  if (config.url[0] !== '/') {
+    config.url = '/' + config.url
+  }
+
+  config.cancelToken = new axios.CancelToken(cancel => {
+    window.axiosPromiseArr.push({ cancel })
+  })
+
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+// response interceptor
+request.interceptors.response.use((response) => {
+  if (Object.prototype.toString.call(response.data) === '[object Blob]') {
+    return response
+  } else {
+    if (response.data && response.data.code) {
+      response.data.code = +response.data.code
     }
-    xhr.send();
-  })
-}
+    return response.data
+  }
+}, error => {
+  if (error && error.response) {
+    const { data: errorResponse } = error.response || {}
+    const { code, msg, data } = errorResponse || {}
+  } else if (error.code === 'ECONNABORTED') {
+    // Message.error('请求超时,请稍后重试')
+  }
+  return Promise.reject(error.response)
+})
 
 
-const ajax = (url) => {
-  return new Promise(async (resolve, reject) => {
-    // let loginState = await isLogin()
-    // if (!loginState || +loginState.code !== 0 || !loginState.data.isLogin) {
-    //   ElMessage({
-    //     message: loginState.data.remark || '服务维护中~~~',
-    //     type: 'error',
-    //     duration: 2000,
-    //   })
-    //   return
-    // }
-
-    const baseURL = process.env.NODE_ENV === 'production' ? "https://wallhaven.cc/api/v1/" : "https://wallhaven.cc/api/v1/";
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', baseURL + url);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState !== 4) return;
-      if (xhr.status === 200 || xhr.status === 304) {
-        try {
-          resolve(JSON.parse(xhr.responseText));
-        } catch (error) {
-          resolve(xhr.responseText);
-        }
-      } else {
-        reject(new Error(xhr.responseText));
-      }
-    }
-    xhr.send();
-  })
-}
-
-/**
- * 获取图片数据
- * @param {*} url 文件地址
- * @param {*} timeout 超时时间
- */
-export const getImgBlod = (url, timeout = 60000) => {
-  return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.responseType = "blob";
-
-    let timedout = false;
-    let timer = setTimeout(function () {
-      timedout = true;
-      xhr.abort();
-      reject('连接超时！！！')
-    }, timeout);
-
-
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState !== 4) return;
-      if (timedout) { return; }
-      clearTimeout(timer);
-      if (xhr.status === 200 || xhr.status === 304) {
-        try {
-          let blob = this.response;
-          console.log('blob', blob)
-          resolve(window.URL.createObjectURL(blob));
-        }
-        catch (error) {
-          reject(xhr.responseText);
-        }
-      } else {
-        reject(new Error(xhr.responseText));
-      }
-    };
-    xhr.send();
-  })
-}
-
-export default ajax;
+export default request

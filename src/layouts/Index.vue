@@ -2,12 +2,16 @@
   <div class="app">
     <layout-nav> </layout-nav>
 
-    <main class="main">
-      <!-- <transition name="slide-fade"> -->
-      <keep-alive>
+    <main class="main v-flex">
+      <layoutAside></layoutAside>
+
+      <div class="main-content">
+        <!-- <transition name="slide-fade"> -->
+        <!-- <keep-alive> -->
         <router-view ref="routerView"></router-view>
-      </keep-alive>
-      <!-- </transition> -->
+        <!-- </keep-alive> -->
+        <!-- </transition> -->
+      </div>
     </main>
 
     <img-view :data="view"></img-view>
@@ -16,11 +20,13 @@
 
 <script>
 import LayoutNav from "./layoutNav";
+import layoutAside from "./layoutAside";
 
 export default {
   name: "App",
   components: {
     LayoutNav,
+    layoutAside,
   },
   data() {
     return {
@@ -48,6 +54,11 @@ export default {
     height: calc(100vh - var(--layout-header-height));
     position: relative;
     overflow: hidden;
+
+    .main-content {
+      flex: 1;
+      overflow: hidden;
+    }
   }
 }
 

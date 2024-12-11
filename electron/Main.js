@@ -3,6 +3,9 @@
 // 控制应用生命周期和创建原生浏览器窗口的模组
 const { app, BrowserWindow, ipcMain, Tray, Menu, screen, dialog } = require('electron')
 
+
+
+
 //获取单例锁
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -15,6 +18,10 @@ if (!gotTheLock) {
   global.appDirname = __dirname;
 
   app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+  // app.commandLine.appendSwitch('ignore-certificate-errors')
+  // app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
+  process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
+
 
   let mainWindow;
   function createWindow () {

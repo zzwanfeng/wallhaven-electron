@@ -1,15 +1,4 @@
 <template>
-  <!-- <div>
-    <search-list
-      :total="total"
-      @search="handleSearch"
-      :purity="search.purity"
-      :sorting="search.sorting"
-    ></search-list>
-
-    <img-list :skeleton="skeleton" :list="list" @next="next"></img-list>
-  </div> -->
-
   <div class="page-component">
     <div v-for="item in l">
       <one-title :title="item.title"></one-title>
@@ -19,22 +8,7 @@
 </template>
 
 <script setup>
-// import ImgList from "@/components/ImgList/Index.vue";
-// import SearchList from "@/components/SearchList/Index.vue";
-// import useImagePage from "@/hooks/useImagePage";
-
-// let search = {
-//   categories: "111",
-//   purity: ["SFW"],
-//   sorting: "hot",
-// };
-
-// const { skeleton, page, isLoading, list, total, next, handleSearch, getlist } =
-//   useImagePage();
-
-// getlist(search);
-
-import ajax from "@/utils/request";
+import { wallhavenSearch } from "@/apis/wallhaven";
 import { toRaw } from "vue";
 
 const l = ref([
@@ -62,12 +36,16 @@ const list = ref({
 });
 
 const getData = (type) => {
-  return ajax(
-    `search?sorting=${type}&order=desc&categories=111&purity=110&page=1`
-  ).then((res) => {
+  const params = {
+    sorting: type,
+    order: "desc",
+    categories: 111,
+    purity: 110,
+    page: 1,
+  };
+  wallhavenSearch(params).then((res) => {
     let { data, meta } = res;
     list.value[type] = Object.freeze(data);
-    console.log("list", toRaw(list.value));
   });
 };
 const onRefresh = () => {
@@ -78,23 +56,19 @@ const onRefresh = () => {
 };
 
 onMounted(() => {
-  console.log("111");
   l.value.forEach((item) => getData(item.type));
-
-  // window.addEventListener("scroll", handlerScroll, true);
 });
 </script>
 
 <style lang="scss" scoped>
 .page-component {
+  padding: 0 20px 20px;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0 20px 20px;
   box-sizing: border-box;
 
   > div {
-    height: 100%;
     overflow: hidden;
   }
 }

@@ -48,178 +48,178 @@ import {
   computed,
   watchEffect,
   nextTick,
-} from 'vue'
-import { aspectRatioToWH } from '@/utils/util'
-import { getTime } from '@/utils/util'
-import { getImgBlod } from '@/utils/request'
-import errimg from '@/assets/images/errimg.svg'
-import { ElMessage } from 'element-plus'
-import { SystemStore } from '@/store/modules/System'
-const SystemPinia = SystemStore()
+} from "vue";
+import { aspectRatioToWH } from "@/utils/util";
+import { getTime } from "@/utils/util";
+// import { getImgBlod } from '@/utils/request'
+import errimg from "@/assets/images/errimg.svg";
+import { ElMessage } from "element-plus";
+import { SystemStore } from "@/store/modules/System";
+const SystemPinia = SystemStore();
 
-let loading = ref(false)
-let show = ref(false)
-let imgUrl = ref('')
-let zoom = ref(0)
+let loading = ref(false);
+let show = ref(false);
+let imgUrl = ref("");
+let zoom = ref(0);
 let imgSize = reactive({
   w: 0,
   h: 0,
-})
+});
 
-let clientWidth = ref(0)
-let clientHeight = ref(0)
+let clientWidth = ref(0);
+let clientHeight = ref(0);
 nextTick(() => {
-  let { height, width } = document.documentElement.getBoundingClientRect()
-  clientWidth.value = width
-  clientHeight.value = height
-})
+  let { height, width } = document.documentElement.getBoundingClientRect();
+  clientWidth.value = width;
+  clientHeight.value = height;
+});
 
-let originalW = ref(0)
-let minImg = ref({})
+let originalW = ref(0);
+let minImg = ref({});
 
-let data = ref({})
+let data = ref({});
 SystemPinia.$subscribe(
   (mutation, state) => {
     if (state?.nowImgView?.url) {
-      data.value = state.nowImgView
+      data.value = state.nowImgView;
 
-      handler(data.value)
+      handler(data.value);
     }
   },
   { detached: false }
-)
+);
 
 const handler = (val) => {
-  let { dimension_x, dimension_y, path, ratio } = val
-  show.value = true
-  imgUrl.value = val.thumbs.original //先填充原图等比例的 略缩图
+  let { dimension_x, dimension_y, path, ratio } = val;
+  show.value = true;
+  imgUrl.value = val.thumbs.original; //先填充原图等比例的 略缩图
   const newImgSize = aspectRatioToWH(
     clientWidth.value - 100,
     clientHeight.value - 200,
     ratio,
     dimension_x,
     dimension_y
-  )
-  imgSize.w = newImgSize.w
-  imgSize.h = newImgSize.h
+  );
+  imgSize.w = newImgSize.w;
+  imgSize.h = newImgSize.h;
 
-  originalW.value = dimension_x
-  zoom.value = parseInt((imgSize.w / dimension_x) * 100)
+  originalW.value = dimension_x;
+  zoom.value = parseInt((imgSize.w / dimension_x) * 100);
 
-  minImg.value = { ...imgSize }
-  loading.value = true
+  minImg.value = { ...imgSize };
+  loading.value = true;
 
   // 等待动画完成后
   // setTimeout(() => {
   nextTick(() => {
-    const imgDom = document.getElementById('img')
-    const imgContentDom = document.getElementById('imgContent')
+    const imgDom = document.getElementById("img");
+    const imgContentDom = document.getElementById("imgContent");
 
-    imgDom.style.left = 'auto'
-    imgDom.style.top = 'auto'
+    imgDom.style.left = "auto";
+    imgDom.style.top = "auto";
 
-    imgContentDom.addEventListener('wheel', setImgWH, true)
+    imgContentDom.addEventListener("wheel", setImgWH, true);
 
     // 获取原始图片
     getImgBlod(path)
       .then((res) => {
-        console.log('res', res)
-        imgUrl.value = res
+        console.log("res", res);
+        imgUrl.value = res;
         const newImgSize = aspectRatioToWH(
           clientWidth.value - 100,
           clientHeight.value - 200,
           ratio,
           dimension_x,
           dimension_y
-        )
-        imgSize.w = newImgSize.w
-        imgSize.h = newImgSize.h
-        loading.value = false
+        );
+        imgSize.w = newImgSize.w;
+        imgSize.h = newImgSize.h;
+        loading.value = false;
       })
       .catch((res) => {
         //this.$message.error('图片加载失败')
-        console.log(res)
-        loading.value = false
-      })
-  })
+        console.log(res);
+        loading.value = false;
+      });
+  });
 
   // }, 800)
-}
+};
 
 //还原位置
 const handleRef = () => {
-  const imgDom = document.getElementById('img')
-  imgDom.style.left = 'auto'
-  imgDom.style.top = 'auto'
+  const imgDom = document.getElementById("img");
+  imgDom.style.left = "auto";
+  imgDom.style.top = "auto";
 
-  imgSize.w = minImg.value.w
-  imgSize.h = minImg.value.h
-}
+  imgSize.w = minImg.value.w;
+  imgSize.h = minImg.value.h;
+};
 
 // 图片加载失败
 const handleError = () => {
-  imgUrl.value = errimg
-  imgSize.w = 600
-  imgSize.h = 600
-}
+  imgUrl.value = errimg;
+  imgSize.w = 600;
+  imgSize.h = 600;
+};
 
 // 获取等比高度
 const setImgWH = (e) => {
-  let img = document.getElementById('img')
+  let img = document.getElementById("img");
 
   if (img) {
-    let oX = img.offsetLeft + imgSize.w / 2
-    let oY = img.offsetTop + imgSize.h / 2
+    let oX = img.offsetLeft + imgSize.w / 2;
+    let oY = img.offsetTop + imgSize.h / 2;
 
     if (e.wheelDeltaY > 0) {
-      imgSize.w += imgSize.w * 0.1
-      imgSize.h += imgSize.h * 0.1
+      imgSize.w += imgSize.w * 0.1;
+      imgSize.h += imgSize.h * 0.1;
     } else {
-      imgSize.w -= imgSize.w * 0.1
-      imgSize.h -= imgSize.h * 0.1
+      imgSize.w -= imgSize.w * 0.1;
+      imgSize.h -= imgSize.h * 0.1;
     }
 
     if (imgSize.w < minImg.w) {
-      imgSize.w = minImg.w
+      imgSize.w = minImg.w;
     }
 
     if (imgSize.h < minImg.h) {
-      imgSize.h = minImg.h
+      imgSize.h = minImg.h;
     }
 
-    img.style.left = oX - imgSize.w / 2 + 'px'
-    img.style.top = oY - imgSize.h / 2 + 'px'
+    img.style.left = oX - imgSize.w / 2 + "px";
+    img.style.top = oY - imgSize.h / 2 + "px";
 
-    zoom.value = parseInt((imgSize.w / originalW.value) * 100)
+    zoom.value = parseInt((imgSize.w / originalW.value) * 100);
   }
-}
+};
 
 // 关闭
 const handleClose = async () => {
-  show.value = false
-  await SystemPinia.setNowImgView(null)
-}
+  show.value = false;
+  await SystemPinia.setNowImgView(null);
+};
 
 // 添加收藏
 const handleAddCollection = async (item) => {
-  await SystemPinia.setCollectFiles(item, 'add')
+  await SystemPinia.setCollectFiles(item, "add");
 
   ElMessage({
-    message: '收藏成功',
-    type: 'success',
+    message: "收藏成功",
+    type: "success",
     duration: 2000,
-  })
-}
+  });
+};
 
 // 移除收藏
 const handleRemoveCollection = async (item) => {
-  await SystemPinia.setCollectFiles(item, 'remove')
+  await SystemPinia.setCollectFiles(item, "remove");
   ElMessage({
-    message: '取消收藏',
-    type: 'success',
+    message: "取消收藏",
+    type: "success",
     duration: 2000,
-  })
-}
+  });
+};
 
 // 下载
 const handleDownFile = async (item = data.value) => {
@@ -229,7 +229,7 @@ const handleDownFile = async (item = data.value) => {
     file_size: size,
     resolution,
     thumbs: { small },
-  } = item
+  } = item;
 
   // if (/^blob:/.test(imgUrl.value)) {
   //  // 方法一 ()这个方法还没处理 下载管理的数据 暂时不用)
@@ -272,27 +272,27 @@ const handleDownFile = async (item = data.value) => {
       small,
       _img: item,
     })
-  )
+  );
   setTimeout(async () => {
-    await SystemPinia.setDownFiles(obj)
-  }, 1000)
+    await SystemPinia.setDownFiles(obj);
+  }, 1000);
 
   ElMessage({
-    message: '已加入下载',
-    type: 'success',
+    message: "已加入下载",
+    type: "success",
     duration: 2000,
-  })
+  });
   // }
-}
+};
 
 // 获取收藏状态
 const getCollection = (id) => {
-  let collections = SystemPinia?.getAllCollectFiles ?? []
+  let collections = SystemPinia?.getAllCollectFiles ?? [];
   const isShow =
     collections.length > 0 &&
-    collections.findIndex((item) => id == item.id) !== -1
-  return isShow
-}
+    collections.findIndex((item) => id == item.id) !== -1;
+  return isShow;
+};
 </script>
 
 <style lang="scss" scoped>

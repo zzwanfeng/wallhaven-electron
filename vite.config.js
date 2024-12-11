@@ -24,6 +24,18 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    proxy: {
+      // '/api': {
+      //   target: 'https://wallhaven.cc/api/v1/',
+      //   changeOrigin: true,
+      //   ws: true,
+      // },
+      // '/api1': {
+      //   target: 'https://wallhaven.cc/api/v1/',
+      //   changeOrigin: true,
+      //   ws: true,
+      // },
+    },
   },
   plugins: [
     vue(),

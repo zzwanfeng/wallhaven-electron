@@ -21,7 +21,8 @@
     "pinia": "^2.0.22",
     "vue": "^3.2.37",
     "vue-router": "^4.1.6",
-    "wallpaper": "^4.2.0"
+    "wallpaper": "^4.2.0",
+    "axios": "^0.25.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.0",
@@ -37,7 +38,10 @@
     "unplugin-auto-import": "^0.18.3",
     "vite-plugin-style-import": "^2.0.0",
     "consola": "^3.2.3",
-    "hotkeys-js": "^3.10.1"
+    "hotkeys-js": "^3.10.1",
+    "commitizen": "^4.3.0",
+    "commitlint": "^19.3.0",
+    "cz-customizable": "^7.0.0"
   },
   "build": {
     "appId": "com.my-website.my-app",
