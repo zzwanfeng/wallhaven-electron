@@ -17,17 +17,21 @@
           :height="imgSize.h"
           :src="imgUrl"
         />
+
         <div class="zoom-bage">{{ zoom }}</div>
       </div>
+
       <div class="btns">
         <div @click="handleClose" class="iconfont icon-guanbi"></div>
         <div class="iconfont icon-huifu" @click="handleRef"></div>
         <div class="iconfont icon-xiazai" @click="handleDownFile()"></div>
+
         <div
           v-if="getCollection(data.id)"
           @click="handleRemoveCollection(data)"
           class="iconfont icon-collection-b shoucang"
         ></div>
+
         <div
           v-else
           @click="handleAddCollection(data)"
@@ -51,7 +55,7 @@ import {
 } from "vue";
 import { aspectRatioToWH } from "@/utils/util";
 import { getTime } from "@/utils/util";
-// import { getImgBlod } from '@/utils/request'
+import { getImgBlod } from "@/utils/util";
 import errimg from "@/assets/images/errimg.svg";
 import { ElMessage } from "element-plus";
 import { SystemStore } from "@/store/modules/System";
@@ -76,8 +80,9 @@ nextTick(() => {
 
 let originalW = ref(0);
 let minImg = ref({});
-
 let data = ref({});
+
+// 监听是否预览
 SystemPinia.$subscribe(
   (mutation, state) => {
     if (state?.nowImgView?.url) {
@@ -92,6 +97,7 @@ SystemPinia.$subscribe(
 const handler = (val) => {
   let { dimension_x, dimension_y, path, ratio } = val;
   show.value = true;
+  console.log("show", show.value);
   imgUrl.value = val.thumbs.original; //先填充原图等比例的 略缩图
   const newImgSize = aspectRatioToWH(
     clientWidth.value - 100,
@@ -298,6 +304,8 @@ const getCollection = (id) => {
 <style lang="scss" scoped>
 .animation-content {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vw;
   z-index: 9;

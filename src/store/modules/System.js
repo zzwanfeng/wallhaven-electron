@@ -112,8 +112,10 @@ export const SystemStore = defineStore('systemStore', {
         this.collectFiles = JSON.parse(getCollectFiles)
       }
     },
+
+    // 设置收藏数据
     async setCollectFiles (value, type) {
-      console.log('collectFiles', this.collectFiles)
+      // console.log('collectFiles', this.collectFiles)
       if (type === 'add') {
         this.collectFiles.splice(0, 0, value)
       } else {

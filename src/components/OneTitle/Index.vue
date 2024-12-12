@@ -1,19 +1,23 @@
 <template>
   <div class="one-title">
     <div class="tips"></div>
+
     <div class="title">{{ title }}</div>
+
     <div class="tips right"></div>
   </div>
 </template>
-<script>
-export default {
-  name: "OneTitle",
-  props: {
-    title: String,
+
+<script setup>
+const props = defineProps({
+  title: {
+    type: String,
+    default: "",
   },
-};
+});
 </script>
-<style lang="less" scoped>
+
+<style lang="scss" scoped>
 .one-title {
   display: flex;
   justify-content: center;

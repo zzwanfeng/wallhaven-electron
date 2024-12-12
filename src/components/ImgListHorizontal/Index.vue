@@ -1,6 +1,7 @@
 <template>
   <div ref="imgListHorizontal" class="img-list-horizontal">
     <div class="img-list-left" @click="handleScroll('left')"></div>
+
     <template v-if="list.length">
       <ul ref="visibleList" class="visible-list" :style="style">
         <li
@@ -9,34 +10,40 @@
           :key="item.id"
           class="visible-list-item"
         >
-          <div class="img" @click="handleView($event, item)">
+          <div class="img" @click="handleView(item)">
             <img-plus :src="item.thumbs.small"></img-plus>
+
             <div class="img-info">
               <span>{{ byte(item.file_size) }}</span>
-              <span>{{ item.resolution }}</span>
+
               <span>{{ item.file_type }}</span>
             </div>
           </div>
-          <div class="desc">
+
+          <div class="desc v-flex">
             <span
               title="取消收藏"
               :key="item.id + 'cxx'"
               v-if="getCollection(item.id)"
-              @click="handleRemoveCollection(item)"
+              @click="handleSetCollection(item, 'remove')"
               class="iconfont icon-collection-b shoucang"
             ></span>
             <span
               title="收藏"
               :key="item.id + 'cx'"
               v-else
-              @click="handleAddCollection(item)"
+              @click="handleSetCollection(item, 'add')"
               class="iconfont icon-collection-b"
             ></span>
+
+            <span class="flex-1 v-flex aic jsc">{{ item.resolution }}</span>
+
             <span
               title="设为壁纸"
               class="iconfont icon-zhuomian"
-              @click="handleDownFile(item, true)"
+              @click="handleSetWallpaper(item, true)"
             ></span>
+
             <span
               title="下载"
               class="iconfont icon-xiazai"
@@ -46,6 +53,7 @@
         </li>
       </ul>
     </template>
+
     <template v-else>
       <div ref="visibleList" class="skeleton-wrapper">
         <li v-for="item in 10" :key="item" class="skeleton">
@@ -58,50 +66,149 @@
         </li>
       </div>
     </template>
+
     <div class="img-list-right" @click="handleScroll('right')"></div>
   </div>
 </template>
-<script>
+
+<script setup>
 import Minix from "@/libs/ImageMinix";
 
 import { byte } from "@/utils/util";
+import { SystemStore } from "@/store/modules/System";
+import { ElMessage } from "element-plus";
 
-export default {
-  name: "ImgListHorizontal",
-  mixins: [Minix],
-  data() {
-    return {
-      scroll: 0,
-    };
+const props = defineProps({
+  list: {
+    type: Array,
+    default: () => [],
   },
-  props: {
-    list: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  computed: {
-    style() {
-      return {
-        transform: `translateX(-${this.scroll}px)`,
-      };
-    },
-  },
-  methods: {
-    byte,
-    handleScroll(type) {
-      if (type === "left") {
-        this.scroll = Math.max(this.scroll - 400, 0);
-      } else {
-        this.cWidth = this.$refs.imgListHorizontal.clientWidth;
-        this.vWidth = this.$refs.visibleList.clientWidth;
-        this.scroll = Math.min(this.scroll + 400, this.vWidth - this.cWidth);
-      }
-    },
-  },
+});
+
+// 系统设置
+const SystemPinia = SystemStore();
+// 左右翻页
+const scroll = ref(0);
+// 显示数据
+const list = ref([]);
+
+watch(
+  () => props.list,
+  (newValue, oldValue) => {
+    list.value = newValue;
+  }
+);
+
+// style
+const style = computed(() => {
+  return {
+    transform: `translateX(-${scroll.value}px)`,
+  };
+});
+
+// 左右翻页
+const imgListHorizontal = ref("imgListHorizontal");
+const visibleList = ref("visibleList");
+const handleScroll = (type) => {
+  if (type === "left") {
+    scroll.value = Math.max(scroll.value - 400, 0);
+  } else {
+    let cWidth = imgListHorizontal.value.clientWidth;
+    let vWidth = visibleList.value.clientWidth;
+    scroll.value = Math.min(scroll.value + 400, vWidth - cWidth);
+  }
+};
+
+//查看
+const handleView = async (item) => {
+  await SystemPinia.setNowImgView({ ...item });
+};
+
+// 获取收藏状态
+const getCollection = (id) => {
+  let collections = SystemPinia?.getAllCollectFiles ?? [];
+  const isShow =
+    collections.length > 0 &&
+    collections.findIndex((item) => id == item.id) !== -1;
+  return isShow;
+};
+// 添加/移除 收藏
+const handleSetCollection = async (item, type) => {
+  let message = "收藏成功";
+  if (type === "add") {
+    await SystemPinia.setCollectFiles(item, "add");
+    message = "收藏成功";
+  } else if (type === "remove") {
+    await SystemPinia.setCollectFiles(item, "remove");
+    message = "取消收藏";
+  }
+
+  ElMessage({
+    message,
+    type: "success",
+    duration: 2000,
+  });
+};
+
+// 设为壁纸
+const edge = require("electron-edge-js");
+var handleSetWallpaper = edge.func(`
+    using System.Threading.Tasks;
+    using System.Runtime.InteropServices;
+
+    public class Startup
+    {
+        public async Task<object> Invoke(object input)
+        {
+            string v = (string)input;
+            return SystemParametersInfo(20, 1, v, 1);
+        }
+        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
+	    public static extern int SystemParametersInfo(
+            int uAction,
+            int uParam,
+            string lpvParam,
+            int fuWinIni
+        );
+    }
+`);
+
+// 下载
+const handleDownFile = async (item) => {
+  return new Promise((resolve, reject) => {
+    let {
+      id,
+      path: url,
+      file_size: size,
+      resolution,
+      thumbs: { small },
+    } = item;
+
+    let obj = JSON.parse(
+      JSON.stringify({
+        id,
+        url,
+        size,
+        resolution,
+        small,
+        _img: item,
+      })
+    );
+
+    ElMessage({
+      message: "已加入下载",
+      type: "success",
+      duration: 2000,
+    });
+    setTimeout(async () => {
+      await SystemPinia.setDownFiles(obj);
+      resolve();
+    }, 1000);
+  });
 };
 </script>
-<style lang="less" scoped>
+
+<style lang="scss" scoped>
 .img-list-horizontal {
   position: relative;
 
@@ -201,12 +308,14 @@ export default {
         color: var(--card-desc-font-color);
         font-size: 12px;
         padding: 0 10px;
-        display: flex;
-        justify-content: space-between;
 
         span {
           cursor: pointer;
           font-size: 18px;
+
+          &:last-child {
+            margin-left: 20px;
+          }
         }
 
         .shoucang {

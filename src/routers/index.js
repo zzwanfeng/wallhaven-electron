@@ -24,7 +24,7 @@ export const routes = [
         meta: {
           title: "推荐",
         },
-        component: () => import("@/views/hotPage/Index.vue")
+        component: () => import("@/views/wallhaven/hotPage/Index.vue")
       },
       {
         path: "/acgPage",
