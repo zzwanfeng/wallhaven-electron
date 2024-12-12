@@ -2,21 +2,24 @@
   <div class="layout-aside">
     <div class="logo">
       <img draggable="false" :src="logo" alt />
-      <div>WallpaperZz</div>
+      <div>One Wallpaper</div>
     </div>
 
     <ul class="nav">
       <li v-for="(item, index) in nav" :key="index">
         <div class="nav-title">{{ item.lable }}</div>
+
         <ul>
           <li
             :class="{ actice: actice === i.id }"
             v-for="(i, idx) in item.childer"
             :key="idx"
             @click="handleSelect(i)"
+            class="nav-subtitle"
           >
             <i class="iconfont" :class="i.icon"></i>
             {{ i.lable }}
+
             <el-badge
               is-dot
               v-if="i.id === 'down' && downFiles.length > 0"
@@ -86,7 +89,7 @@ const nav = [
       {
         id: "setting",
         lable: "设置",
-        cname: "updateLog",
+        cname: "setting",
         icon: "icon-guanyu",
       },
       {
@@ -124,7 +127,7 @@ const handleSelect = (i) => {
   width: 260px;
   background-color: #201f2908;
   box-shadow: -10px 0 20px 0px #000000c4;
-  color: #fff;
+  color: var(--font-color);
 
   .logo {
     -webkit-app-region: no-drag;
@@ -132,9 +135,10 @@ const handleSelect = (i) => {
     font-size: 20px;
     line-height: 30px;
     font-weight: 700;
+
     img {
-      width: 120px;
       margin-top: 30px;
+      width: 120px;
     }
   }
 
@@ -147,23 +151,22 @@ const handleSelect = (i) => {
       list-style: none;
       line-height: 50px;
       padding-left: 20px;
-      color: #c6c6c6;
       font-size: 14px;
       position: relative;
 
       .nav-title {
-        color: #ffffff75;
-        font-size: 14px;
+        font-size: 16px;
+        font-weight: 600;
       }
 
-      &:hover {
-        color: #fefefe;
-      }
-
-      li {
+      .nav-subtitle {
         display: inline-block;
         padding: 0 10px;
         margin: 0 18px;
+
+        &:hover {
+          color: var(--hover-font-color);
+        }
 
         &::before {
           content: "";

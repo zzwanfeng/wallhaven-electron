@@ -1,5 +1,5 @@
 <template>
-  <Dialog title="关于" width="500px" :visible.sync="show">
+  <Dialog title="关于" width="500px" v-model:visible="show">
     <div class="about">
       《One Wallhaven》是一个由个人开发的桌面壁纸类程序。
       起初是由于站点（wallhaven.cc）经常无法使用以后，
@@ -19,6 +19,10 @@ const show = ref(false);
 const doToggle = () => {
   show.value = !show.value;
 };
+
+defineExpose({
+  doToggle,
+});
 </script>
 
 <style lang="scss" scoped>

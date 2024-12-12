@@ -97,6 +97,14 @@ export const routes = [
     component: layout,
     children: [
       {
+        path: "/setting",
+        name: "setting",
+        meta: {
+          title: "设置",
+        },
+        component: () => import("@/views/other/setting/index.vue")
+      },
+      {
         path: "/updateLog",
         name: "updateLog",
         meta: {

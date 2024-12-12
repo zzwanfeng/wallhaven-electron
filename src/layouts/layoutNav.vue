@@ -72,12 +72,10 @@ import LogDialog from "./components/Log";
 import { openConfig } from "@/libs/send";
 import { minWindow } from "@/utils/ipcRenderer";
 import { useRouter } from "vue-router";
+import { toRaw } from "vue";
 
 const router = useRouter();
 
-const theme = ref("theme");
-const about = ref("about");
-const log = ref("log");
 const navs = ref([
   {
     title: "下载",
@@ -88,7 +86,6 @@ const navs = ref([
     title: "皮肤",
     type: "theme",
     icon: "icon-a-huaban2fuben9",
-    refs: theme,
   },
   {
     title: "设置",
@@ -99,13 +96,11 @@ const navs = ref([
     title: "日志",
     type: "log",
     icon: "icon-xitongrizhi",
-    refs: log,
   },
   {
     title: "关于",
     type: "about",
     icon: "icon-guanyu1",
-    refs: about,
   },
 ]);
 const isMax = ref(false);
@@ -140,18 +135,29 @@ const handleTitleClick = (type) => {
 
 // 菜单
 const popover = ref("popover");
+const theme = ref("theme");
+const about = ref("about");
+const log = ref("log");
 const handleNavClick = (item) => {
   popover.value.doToggle();
 
   if (item.type === "set") {
-    openConfig();
+    // openConfig();
+    router.push({
+      name: "setting",
+      query: {},
+    });
   } else if (item.type === "down") {
     router.push({
       name: "downloadPage",
       query: {},
     });
-  } else {
-    item.refs.doToggle();
+  } else if (item.type === "theme") {
+    theme.value.doToggle();
+  } else if (item.type === "about") {
+    about.value.doToggle();
+  } else if (item.type === "log") {
+    log.value.doToggle();
   }
 };
 </script>

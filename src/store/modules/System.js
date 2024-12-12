@@ -2,16 +2,24 @@ import { defineStore } from 'pinia'
 import { downFile } from '@/utils/downfile'
 import { getTime } from '@/utils/util'
 
-export const SystemStore = defineStore('SystemStore', {
+export const SystemStore = defineStore('systemStore', {
   state () {
     return {
-      downFiles: [],
-      downDoneFiles: [],
-      nowImgView: {},
-      collectFiles: []
+      systemConfig: {
+        theme: 'light',//主题色
+      },
+
+      downFiles: [],//下载文件列表
+      downDoneFiles: [],//已下载文件列表
+      nowImgView: {},//当前展示图片
+      collectFiles: []//收藏
     }
   },
   getters: {
+    getSystemTheme (state) {
+      return state.systemConfig.theme
+    },
+
     getAllCollectFiles (state) {
       this.restCollectFiles()
       return state.collectFiles
@@ -26,6 +34,11 @@ export const SystemStore = defineStore('SystemStore', {
     }
   },
   actions: {
+    // 设置主题
+    setSystemTheme (value) {
+      this.systemConfig.theme = value
+    },
+
     // 下载文件
     async setDownFiles (value, type = 'add') {
       if (type === 'add') {

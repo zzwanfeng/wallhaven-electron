@@ -7,6 +7,7 @@
         </div>
         <span class="one-btn iconfont icon-guanbi" @click="close"></span>
       </div>
+
       <div class="one-dialog-content">
         <slot></slot>
       </div>
@@ -53,7 +54,7 @@ watch(
         hotkeys("esc", close);
       }
       if (props.appendToBody) {
-        document.body.appendChild(this.$el);
+        // document.body.appendChild(this.$el);
       }
     } else {
       hotkeys.unbind("esc", close);
@@ -67,16 +68,16 @@ const close = (type) => {
 };
 
 onMounted(() => {
-  if (this.visible) {
-    if (this.closeOnPressEscape) hotkeys("esc", this.close);
-    if (this.appendToBody) document.body.appendChild(this.$el);
+  if (props.visible) {
+    // if (props.closeOnPressEscape) hotkeys("esc", this.close);
+    // if (props.appendToBody) document.body.appendChild(this.$el);
   }
 });
 
-onDestroyed(() => {
-  if (this.appendToBody && this.$el && this.$el.parentNode) {
-    this.$el.parentNode.removeChild(this.$el);
-  }
+onUnmounted(() => {
+  // if (this.appendToBody && this.$el && this.$el.parentNode) {
+  //   this.$el.parentNode.removeChild(this.$el);
+  // }
 });
 </script>
 

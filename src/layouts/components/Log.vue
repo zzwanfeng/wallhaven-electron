@@ -1,5 +1,5 @@
 <template>
-  <OneDialog title="日志" :visible.sync="show" width="400px">
+  <OneDialog title="日志" v-model:visible="show" width="400px">
     <div class="logs">
       <ul class="version" v-for="(item, index) in logs" :key="index">
         <h3>
@@ -11,55 +11,50 @@
     </div>
   </OneDialog>
 </template>
-<script>
-import OneDialog from "./Dialog";
-import logs from "@/assets/log";
 
-export default {
-  components: {
-    OneDialog,
-  },
-  data() {
-    return {
-      show: false,
-      logs,
-    };
-  },
-  methods: {
-    doToggle() {
-      this.show = !this.show;
-    },
-  },
+<script setup>
+import OneDialog from "./Dialog";
+import { logs } from "../Enum";
+
+const show = ref(false);
+
+const doToggle = () => {
+  show.value = !show.value;
 };
+
+defineExpose({
+  doToggle,
+});
 </script>
-<style lang="less" scoped>
+
+<style lang="scss" scoped>
 .logs {
+  margin-right: 6px;
+  padding: 0 14px 0 20px;
   height: 280px;
   margin-bottom: 20px;
   overflow-y: auto;
-  padding: 0 14px 0 20px;
-  margin-right: 6px;
-}
 
-.version {
-  list-style: none;
+  .version {
+    list-style: none;
 
-  h3 {
-    display: flex;
-    justify-content: space-between;
-    line-height: 2;
-  }
+    h3 {
+      display: flex;
+      justify-content: space-between;
+      line-height: 2;
+    }
 
-  li {
-    margin-left: 10px;
-    line-height: 26px;
-    opacity: 0.7;
-  }
+    li {
+      margin-left: 10px;
+      line-height: 26px;
+      opacity: 0.7;
+    }
 
-  + .version {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px dashed var(--border-color);
+    + .version {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed var(--border-color);
+    }
   }
 }
 </style>
