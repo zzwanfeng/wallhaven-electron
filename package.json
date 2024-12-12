@@ -22,6 +22,7 @@
     "vue": "^3.2.37",
     "vue-router": "^4.1.6",
     "wallpaper": "^4.2.0",
+    "electron-store": "^8.1.0",
     "axios": "^0.25.0"
   },
   "devDependencies": {
