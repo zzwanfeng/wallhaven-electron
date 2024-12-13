@@ -52,10 +52,10 @@ export default defineConfig({
     // unplugin-vue-components插件 自动导入自己的插件 需要的可以打开
     Components({
       // ui库解析器，也可以自定义
-      // resolvers: [
-      //   // 自动导入 Element Plus 组件
-      //   ElementPlusResolver(),
-      // ],
+      resolvers: [
+        // 自动导入 Element Plus 组件
+        ElementPlusResolver(),
+      ],
       //  指定组件位置，默认是src/components
       dirs: ['src/components'],
       // 要搜索组件的目录的相对路径

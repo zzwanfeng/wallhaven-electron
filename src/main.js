@@ -9,7 +9,7 @@ import '@/style/index.scss';
 import { createApp } from 'vue'
 import { store } from '@/store'
 import { initDirective } from './directives'
-import { initPath, updateDownState } from '@/utils/downfile'
+import { initPath, updateDownState } from '@/libs/send'
 // 初始化下载目录
 initPath()
 

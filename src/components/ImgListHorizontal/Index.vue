@@ -3,7 +3,7 @@
     <div class="img-list-left" @click="handleScroll('left')"></div>
 
     <template v-if="list.length">
-      <ul ref="visibleList" class="visible-list" :style="style">
+      <ul ref="visibleList" class="visible-list" :style="ulStyle">
         <li
           ref="imgs"
           v-for="item in list"
@@ -20,35 +20,41 @@
             </div>
           </div>
 
-          <div class="desc v-flex">
-            <span
-              title="取消收藏"
-              :key="item.id + 'cxx'"
-              v-if="getCollection(item.id)"
-              @click="handleSetCollection(item, 'remove')"
-              class="iconfont icon-collection-b shoucang"
-            ></span>
-            <span
-              title="收藏"
-              :key="item.id + 'cx'"
-              v-else
-              @click="handleSetCollection(item, 'add')"
-              class="iconfont icon-collection-b"
-            ></span>
+          <div class="desc v-flex aic jsb">
+            <el-tooltip effect="light" placement="top">
+              <template #content>
+                {{ getCollection(item.id) ? "取消收藏" : "收藏" }}
+              </template>
+
+              <span
+                :key="item.id + 'cxx'"
+                v-if="getCollection(item.id)"
+                @click="handleSetCollection(item, 'remove')"
+                class="iconfont icon-collection-b shoucang"
+              ></span>
+              <span
+                :key="item.id + 'cx'"
+                v-else
+                @click="handleSetCollection(item, 'add')"
+                class="iconfont icon-collection-b"
+              ></span>
+            </el-tooltip>
 
             <span class="flex-1 v-flex aic jsc">{{ item.resolution }}</span>
 
-            <span
-              title="设为壁纸"
-              class="iconfont icon-zhuomian"
-              @click="handleSetWallpaper(item, true)"
-            ></span>
+            <el-tooltip effect="light" content="设为壁纸" placement="top">
+              <span
+                class="iconfont icon-zhuomian"
+                @click="handleSetWallpaper(item, true)"
+              ></span>
+            </el-tooltip>
 
-            <span
-              title="下载"
-              class="iconfont icon-xiazai"
-              @click="handleDownFile(item)"
-            ></span>
+            <el-tooltip effect="light" content="下载" placement="top">
+              <span
+                class="iconfont icon-xiazai"
+                @click="handleDownFile(item)"
+              ></span>
+            </el-tooltip>
           </div>
         </li>
       </ul>
@@ -72,11 +78,13 @@
 </template>
 
 <script setup>
-import Minix from "@/libs/ImageMinix";
+import handleWallhaven from "@/hooks/handleWallhaven";
 
 import { byte } from "@/utils/util";
 import { SystemStore } from "@/store/modules/System";
-import { ElMessage } from "element-plus";
+
+const { handleView, getCollection, handleSetCollection, handleDownFile } =
+  handleWallhaven();
 
 const props = defineProps({
   list: {
@@ -100,7 +108,7 @@ watch(
 );
 
 // style
-const style = computed(() => {
+const ulStyle = computed(() => {
   return {
     transform: `translateX(-${scroll.value}px)`,
   };
@@ -117,38 +125,6 @@ const handleScroll = (type) => {
     let vWidth = visibleList.value.clientWidth;
     scroll.value = Math.min(scroll.value + 400, vWidth - cWidth);
   }
-};
-
-//查看
-const handleView = async (e, item) => {
-  let { x, y } = e.target.getClientRects()[0];
-  await SystemPinia.setNowImgView({ ...item, rect: { x, y } });
-};
-
-// 获取收藏状态
-const getCollection = (id) => {
-  let collections = SystemPinia?.getAllCollectFiles ?? [];
-  const isShow =
-    collections.length > 0 &&
-    collections.findIndex((item) => id == item.id) !== -1;
-  return isShow;
-};
-// 添加/移除 收藏
-const handleSetCollection = async (item, type) => {
-  let message = "收藏成功";
-  if (type === "add") {
-    await SystemPinia.setCollectFiles(item, "add");
-    message = "收藏成功";
-  } else if (type === "remove") {
-    await SystemPinia.setCollectFiles(item, "remove");
-    message = "取消收藏";
-  }
-
-  ElMessage({
-    message,
-    type: "success",
-    duration: 2000,
-  });
 };
 
 // 设为壁纸
@@ -174,39 +150,7 @@ var handleSetWallpaper = edge.func(`
     }
 `);
 
-// 下载
-const handleDownFile = async (item) => {
-  return new Promise((resolve, reject) => {
-    let {
-      id,
-      path: url,
-      file_size: size,
-      resolution,
-      thumbs: { small },
-    } = item;
-
-    let obj = JSON.parse(
-      JSON.stringify({
-        id,
-        url,
-        size,
-        resolution,
-        small,
-        _img: item,
-      })
-    );
-
-    ElMessage({
-      message: "已加入下载",
-      type: "success",
-      duration: 2000,
-    });
-    setTimeout(async () => {
-      await SystemPinia.setDownFiles(obj);
-      resolve();
-    }, 1000);
-  });
-};
+onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
@@ -303,17 +247,13 @@ const handleDownFile = async (item) => {
       }
 
       .desc {
-        line-height: 40px;
+        padding: 0 10px;
         height: 40px;
         background: var(--card-desc-bg-color);
         color: var(--card-desc-font-color);
         font-size: 12px;
-        padding: 0 10px;
 
         span {
-          cursor: pointer;
-          font-size: 18px;
-
           &:last-child {
             margin-left: 20px;
           }

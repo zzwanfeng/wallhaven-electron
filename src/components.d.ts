@@ -9,6 +9,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     AsideNav: typeof import('./components/AsideNav/Index.vue')['default']
     ContextMenu: typeof import('./components/context-menu.vue')['default']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
+    ElProgress: typeof import('element-plus/es')['ElProgress']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     EmptyPage: typeof import('./components/EmptyPage/Index.vue')['default']
     ImgList: typeof import('./components/ImgList/Index.vue')['default']
     ImgListHorizontal: typeof import('./components/ImgListHorizontal/Index.vue')['default']
@@ -19,5 +23,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchList: typeof import('./components/SearchList/Index.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

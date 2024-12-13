@@ -58,7 +58,7 @@ export const routes = [
         meta: {
           title: "我的收藏",
         },
-        component: () => import("@/views/collectionPage/Index.vue")
+        component: () => import("@/views/my/collectionPage/Index.vue")
       },
       {
         path: "/downloadPage",

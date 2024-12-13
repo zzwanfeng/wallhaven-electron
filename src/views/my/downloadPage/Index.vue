@@ -82,8 +82,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { byte } from '@/utils/util'
+import { ref } from "vue";
+import { byte } from "@/utils/util";
 /* const dataJs = {
         id: '唯一值',
         url: '下载路径',
@@ -100,82 +100,82 @@ import { byte } from '@/utils/util'
         eTag: '标示',
         startTime: 'UNIX 下载时间'
     } */
-import { SystemStore } from '@/store/modules/System'
-import { pause, resume, nextresume, cancel } from '@/utils/downfile'
-let { shell, ipcRenderer } = require('electron')
+import { SystemStore } from "@/store/modules/System";
+import { pause, resume, nextresume, cancel } from "@/libs/send";
+let { shell, ipcRenderer } = require("electron");
 
-const SystemPinia = SystemStore()
-let downFiles = SystemPinia?.getAllDownFiles ?? []
-let downDoneFiles = SystemPinia?.getAllDownDoneFiles ?? []
+const SystemPinia = SystemStore();
+let downFiles = SystemPinia?.getAllDownFiles ?? [];
+let downDoneFiles = SystemPinia?.getAllDownDoneFiles ?? [];
 
 // 下载地址
-let path = ref(localStorage.getItem('downloads'))
+let path = ref(localStorage.getItem("downloads"));
 
 //暂停
 const handlePaused = (img) => {
-  pause(img.url)
-}
+  pause(img.url);
+};
 
 //恢复下载  恢复断点下载
 const handleResume = (img) => {
-  if (img.state === 'paused') {
-    resume(img.url)
+  if (img.state === "paused") {
+    resume(img.url);
   } else {
-    nextresume(img)
+    nextresume(img);
   }
-}
+};
 
 //取消下载
-const handleClose = (item, type = 'downing') => {
-  if (type === 'downing') {
+const handleClose = (item, type = "downing") => {
+  if (type === "downing") {
     //取消下载任务
-    if (item.state !== 'completed') {
-      cancel(item.url)
+    if (item.state !== "completed") {
+      cancel(item.url);
     }
     //删除列表
-    SystemPinia.setDownFiles(item, 'remove')
+    SystemPinia.setDownFiles(item, "remove");
   } else {
-    SystemPinia.setDownDoneFiles(item, 'remove')
+    SystemPinia.setDownDoneFiles(item, "remove");
   }
-}
+};
 
 // 打开图片路径
 const handleOpen = (event) => {
-  let path = event.target.dataset.path
+  let path = event.target.dataset.path;
   if (path !== undefined) {
-    ipcRenderer.send('check_path', { path })
+    ipcRenderer.send("check_path", { path });
     ipcRenderer.once(`check_path${path}`, (e, err) => {
       err &&
         this.$message({
-          message: '文件不存在',
-          type: 'error',
+          message: "文件不存在",
+          type: "error",
           duration: 2000,
-        })
-    })
+        });
+    });
   }
-}
+};
 
 const handleSetDownPath = () => {
-  ipcRenderer.send('set_path')
+  ipcRenderer.send("set_path");
   ipcRenderer.once(`set_path`, (e, data) => {
     if (!data.canceled) {
-      localStorage.setItem('downloads', data.filePaths[0])
-      path.value = data.filePaths[0]
+      localStorage.setItem("downloads", data.filePaths[0]);
+      path.value = data.filePaths[0];
     }
-  })
-}
+  });
+};
 
 const state = (val) => {
-  if (['cancelled', 'interrupted-err'].includes(val)) {
-    return 'exception'
+  if (["cancelled", "interrupted-err"].includes(val)) {
+    return "exception";
   }
   // 暂停 - 或者可恢复
-  else if (['paused', 'interrupted'].includes(val)) {
-    return 'warning'
-  } else if (['completed'].includes(val)) {
-    return 'success'
+  else if (["paused", "interrupted"].includes(val)) {
+    return "warning";
+  } else if (["completed"].includes(val)) {
+    return "success";
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

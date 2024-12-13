@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { downFile } from '@/utils/downfile'
+import { downFile } from '@/libs/send'
 import { getTime } from '@/utils/util'
 
 export const SystemStore = defineStore('systemStore', {
@@ -39,23 +39,25 @@ export const SystemStore = defineStore('systemStore', {
       this.systemConfig.theme = value
     },
 
-    // 下载文件
-    async setDownFiles (value, type = 'add') {
-      if (type === 'add') {
-        let index = this.downFiles.findIndex(item => item.id === value.id);
-        if (index === -1) {
-          value.progress = 0;
-          value.speedBytes = 0;
-          value.state = 'wait';
-          value.done = "downing";
-          this.downFiles.splice(0, 0, value)
-          downFile(value)
-        }
-      } else {
-        let index = this.downFiles.findIndex(item => item.id === value.id);
-        if (index > -1) {
-          this.downFiles.splice(index, 1)
-        }
+    // 增加 下载文件
+    async setDownFiles (value) {
+      let index = this.downFiles.findIndex(item => item.id === value.id);
+      if (index === -1) {
+        value.progress = 0;
+        value.speedBytes = 0;
+        value.state = 'wait';
+        value.done = "downing";
+        this.downFiles.splice(0, 0, value)
+        downFile(value)
+      }
+      // todo  开发阶段先用缓存   后续修改
+      window.localStorage.setItem('downFiles', JSON.stringify(this.downFiles))
+    },
+    // 删除 下载文件/任务
+    async deleteDownFiles (value) {
+      let index = this.downFiles.findIndex(item => item.id === value.id);
+      if (index > -1) {
+        this.downFiles.splice(index, 1)
       }
       // todo  开发阶段先用缓存   后续修改
       window.localStorage.setItem('downFiles', JSON.stringify(this.downFiles))
