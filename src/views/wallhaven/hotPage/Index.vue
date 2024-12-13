@@ -69,6 +69,7 @@ onMounted(() => {
   box-sizing: border-box;
 
   > div {
+    padding: 10px 0;
     overflow: hidden;
   }
 }
