@@ -3,19 +3,16 @@
     <div v-if="show" class="animation-content">
       <div
         class="img-view"
-        ref="imgContent"
-        id="imgContent"
+        ref="imgContentRef"
         v-loading="loading"
         element-loading-text="加载中..."
       >
         <img
-          v-dragwidth
           @error="loading ? '' : handleError"
-          ref="img"
-          id="img"
+          ref="imgRef"
           draggable="false"
-          :width="imgSize.w"
-          :height="imgSize.h"
+          v-dragwidth
+          :style="imgStyle"
           :src="imgUrl"
         />
 
@@ -66,16 +63,6 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  watch,
-  reactive,
-  computed,
-  watchEffect,
-  nextTick,
-} from "vue";
 import { aspectRatioToWH } from "@/utils/util";
 import { getTime } from "@/utils/util";
 import { getImgBlod } from "@/utils/util";
@@ -84,26 +71,29 @@ import { ElMessage } from "element-plus";
 import { SystemStore } from "@/store/modules/System";
 const SystemPinia = SystemStore();
 
+// 页面loading
 let loading = ref(false);
+// 窗口显示
 let show = ref(false);
+// 图片地址
 let imgUrl = ref("");
+// 缩放比例
 let zoom = ref(0);
-let imgSize = reactive({
-  w: 0,
-  h: 0,
+// 图片配置
+const imgStyle = ref({
+  width: 0,
+  height: 0,
+  transform: "none",
 });
-
+// 窗口宽
 let clientWidth = ref(0);
+// 窗口高
 let clientHeight = ref(0);
-nextTick(() => {
-  let { height, width } = document.documentElement.getBoundingClientRect();
-  clientWidth.value = width;
-  clientHeight.value = height;
-});
-
 let originalW = ref(0);
 let minImg = ref({});
 let data = ref({});
+const imgRef = ref("imgRef");
+const imgContentRef = ref("imgContentRef");
 
 // 监听是否预览
 SystemPinia.$subscribe(
@@ -111,99 +101,138 @@ SystemPinia.$subscribe(
     if (state?.nowImgView?.url) {
       data.value = state.nowImgView;
 
-      handler(data.value);
+      init(data.value);
     }
   },
   { detached: false }
 );
 
-const handler = (val) => {
-  let { dimension_x, dimension_y, path, ratio } = val;
+const init = (val) => {
+  let {
+    thumbs_height = 200,
+    thumbs_width = 300,
+    thumbs,
+    original,
+    dimension_x,
+    dimension_y,
+    path,
+    ratio,
+    rect,
+  } = val;
   imgUrl.value = "";
   show.value = true;
   loading.value = true;
+  originalW.value = dimension_x;
 
   // 等待动画完成后
   nextTick(() => {
-    const imgDom = document.getElementById("img");
-    const imgContentDom = document.getElementById("imgContent");
+    const keyframes = [
+      { transform: `translate(${rect.x}px, ${rect.y}px)` },
+      { transform: imgStyle.value.transform },
+    ];
 
-    imgDom.style.left = "auto";
-    imgDom.style.top = "auto";
+    const options = {
+      duration: 300,
+      easing: "cubic-bezier(0,0,0.32,1)",
+    };
+    const animate = imgRef.value.animate(keyframes, options);
 
-    imgContentDom.addEventListener("wheel", setImgWH, true);
+    animate.onfinish = () => {
+      const { width, height } = aspectRatioToWH(
+        clientWidth.value - 200,
+        clientHeight.value - 200,
+        ratio,
+        dimension_x,
+        dimension_y
+      );
 
-    // 获取原始图片
-    getImgBlod(path)
-      .then((res) => {
-        imgUrl.value = res;
-        const newImgSize = aspectRatioToWH(
-          clientWidth.value - 100,
-          clientHeight.value - 200,
-          ratio,
-          dimension_x,
-          dimension_y
-        );
-        imgSize.w = newImgSize.w;
-        imgSize.h = newImgSize.h;
-        loading.value = false;
-      })
-      .catch((res) => {
-        ElMessage({
-          message: "图片加载失败",
-          type: "error",
-          duration: 2000,
+      imgContentRef.value.addEventListener("wheel", setImgWH);
+      minImg.value = { width, height };
+      zoom.value = parseInt((width / dimension_x) * 100);
+
+      // 获取原始图片
+      getImgBlod(path)
+        .then((res) => {
+          imgStyle.value = {
+            width: width + "px",
+            height: height + "px",
+            transform: `translate(${(clientWidth.value - width) / 2}px, ${
+              (clientHeight.value - height) / 2
+            }px)`,
+          };
+
+          imgUrl.value = res;
+          loading.value = false;
+        })
+        .catch((res) => {
+          ElMessage({
+            message: "图片加载失败",
+            type: "error",
+            duration: 2000,
+          });
+          loading.value = false;
         });
-        loading.value = false;
-      });
+    };
   });
 };
 
 //还原位置
 const handleRef = () => {
-  const imgDom = document.getElementById("img");
-  imgDom.style.left = "auto";
-  imgDom.style.top = "auto";
+  const { width, height } = minImg.value;
 
-  imgSize.w = minImg.value.w;
-  imgSize.h = minImg.value.h;
+  imgStyle.value = {
+    width: width + "px",
+    height: height + "px",
+    transform: `translate(${(clientWidth.value - width) / 2}px, ${
+      (clientHeight.value - height) / 2
+    }px)`,
+  };
+
+  imgRef.value.style.transform = imgStyle.value.transform;
 };
 
 // 图片加载失败
 const handleError = () => {
   imgUrl.value = errimg;
-  imgSize.w = 600;
-  imgSize.h = 600;
+  imgStyle.value = { width: "600px", h: "600px" };
 };
 
 // 获取等比高度
 const setImgWH = (e) => {
-  let img = document.getElementById("img");
+  if (imgRef.value) {
+    let { x, y } = imgRef.value.getBoundingClientRect();
 
-  if (img) {
-    let oX = img.offsetLeft + imgSize.w / 2;
-    let oY = img.offsetTop + imgSize.h / 2;
+    let { width, height } = imgStyle.value;
+    width = parseFloat(width.replace("px", ""));
+    height = parseFloat(height.replace("px", ""));
+
+    let oX = x + width / 2;
+    let oY = y + height / 2;
 
     if (e.wheelDeltaY > 0) {
-      imgSize.w += imgSize.w * 0.1;
-      imgSize.h += imgSize.h * 0.1;
+      width += width * 0.1;
+      height += height * 0.1;
     } else {
-      imgSize.w -= imgSize.w * 0.1;
-      imgSize.h -= imgSize.h * 0.1;
+      width -= width * 0.1;
+      height -= height * 0.1;
     }
 
-    if (imgSize.w < minImg.w) {
-      imgSize.w = minImg.w;
+    if (width < minImg.value.width) {
+      width = minImg.value.width;
     }
 
-    if (imgSize.h < minImg.h) {
-      imgSize.h = minImg.h;
+    if (height < minImg.value.height) {
+      height = minImg.value.height;
     }
 
-    img.style.left = oX - imgSize.w / 2 + "px";
-    img.style.top = oY - imgSize.h / 2 + "px";
+    imgStyle.value.width = width + "px";
+    imgStyle.value.height = height + "px";
 
-    zoom.value = parseInt((imgSize.w / originalW.value) * 100);
+    imgRef.value.style.transform = `translate(${oX - width / 2}px, ${
+      oY - height / 2
+    }px)`;
+
+    zoom.value = parseInt((width / originalW.value) * 100);
   }
 };
 
@@ -338,27 +367,27 @@ onUnmounted(() => {
   overflow: hidden;
 
   .img-view {
-    position: absolute;
+    position: relative;
     width: 100vw;
     height: 100vh;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     img {
+      left: 0;
+      top: 0;
       position: absolute;
     }
 
     .zoom-bage {
       position: absolute;
-      right: 0px;
-      bottom: 10px;
-      font-size: 14px;
-      color: #fff;
+      right: 0;
+      left: 0;
+      margin: 0 auto;
+      bottom: 20px;
+      color: #cacaca;
       width: 88px;
       text-align: center;
+      font-size: 18px;
+      font-family: fantasy;
     }
   }
 

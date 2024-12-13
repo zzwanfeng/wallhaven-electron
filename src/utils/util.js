@@ -165,23 +165,23 @@ export const objToUrl = (obj = {}) => {
 * @param {*} h 容器高
 * @param {*} r 图片宽高比
 */
-export const aspectRatioToWH = (w, h, r, iw, ih) => {
-  let _r = w / h;
-  if (iw < w && ih < h) {
-    return { w: iw, h: ih }
+export const aspectRatioToWH = (width, height, r, iw, ih) => {
+  let _r = width / height;
+  if (iw < width && ih < height) {
+    return { width: iw, height: ih }
   }
   //容器宽度比 大=于 内容 宽高比  以高度为基准
   if (_r > r) {
     return {
-      w: h * r, h
+      width: height * r, height
     }
   } else if (_r < r) {
     return {
-      w, h: w / r
+      width, height: width / r
     }
   } else {
     return {
-      w, h
+      width, height
     }
   }
 }

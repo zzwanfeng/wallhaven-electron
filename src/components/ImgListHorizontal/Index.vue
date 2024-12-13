@@ -10,7 +10,7 @@
           :key="item.id"
           class="visible-list-item"
         >
-          <div class="img" @click="handleView(item)">
+          <div class="img" @click="handleView($event, item)">
             <img-plus :src="item.thumbs.small"></img-plus>
 
             <div class="img-info">
@@ -120,8 +120,9 @@ const handleScroll = (type) => {
 };
 
 //查看
-const handleView = async (item) => {
-  await SystemPinia.setNowImgView({ ...item });
+const handleView = async (e, item) => {
+  let { x, y } = e.target.getClientRects()[0];
+  await SystemPinia.setNowImgView({ ...item, rect: { x, y } });
 };
 
 // 获取收藏状态
