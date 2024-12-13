@@ -205,7 +205,7 @@ body {
   transform: translate(50%, -80%);
 }
 
-.one-button {
+.button-default {
   background-color: var(--button-bg-color);
   color: var(--button-font-color);
   border: 1px solid var(--button-border-color);
@@ -218,7 +218,7 @@ body {
   }
 }
 
-.one-button-plain {
+.button-plain {
   background-color: var(--button-plain-bg-color);
   color: var(--button-plain-font-color);
   border: 1px solid var(--button-plain-border-color);

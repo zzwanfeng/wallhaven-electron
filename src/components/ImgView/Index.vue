@@ -6,10 +6,11 @@
         ref="imgContent"
         id="imgContent"
         v-loading="loading"
+        element-loading-text="加载中..."
       >
         <img
           v-dragwidth
-          @error="handleError"
+          @error="loading ? '' : handleError"
           ref="img"
           id="img"
           draggable="false"
@@ -22,20 +23,42 @@
       </div>
 
       <div class="btns">
-        <div @click="handleClose" class="iconfont icon-guanbi"></div>
-        <div class="iconfont icon-huifu" @click="handleRef"></div>
-        <div class="iconfont icon-xiazai" @click="handleDownFile()"></div>
-
         <div
-          v-if="getCollection(data.id)"
-          @click="handleRemoveCollection(data)"
-          class="iconfont icon-collection-b shoucang"
+          title="关闭"
+          @click="handleClose"
+          class="button-default iconfont icon-guanbi"
         ></div>
 
         <div
+          title="还原"
+          class="button-default iconfont icon-huifu"
+          @click="handleRef"
+        ></div>
+
+        <div
+          title="下载"
+          class="button-default iconfont icon-xiazai"
+          @click="handleDownFile()"
+        ></div>
+
+        <div
+          title="设为壁纸"
+          class="button-default iconfont icon-zhuomian"
+          @click="() => handleSetWallpaper(item, true)"
+        ></div>
+
+        <div
+          title="取消收藏"
+          v-if="getCollection(data.id)"
+          @click="handleRemoveCollection(data)"
+          class="button-default iconfont icon-collection-b shoucang"
+        ></div>
+
+        <div
+          title="收藏"
           v-else
           @click="handleAddCollection(data)"
-          class="iconfont icon-collection-b"
+          class="button-default iconfont icon-collection-b"
         ></div>
       </div>
     </div>
@@ -96,27 +119,11 @@ SystemPinia.$subscribe(
 
 const handler = (val) => {
   let { dimension_x, dimension_y, path, ratio } = val;
+  imgUrl.value = "";
   show.value = true;
-  console.log("show", show.value);
-  imgUrl.value = val.thumbs.original; //先填充原图等比例的 略缩图
-  const newImgSize = aspectRatioToWH(
-    clientWidth.value - 100,
-    clientHeight.value - 200,
-    ratio,
-    dimension_x,
-    dimension_y
-  );
-  imgSize.w = newImgSize.w;
-  imgSize.h = newImgSize.h;
-
-  originalW.value = dimension_x;
-  zoom.value = parseInt((imgSize.w / dimension_x) * 100);
-
-  minImg.value = { ...imgSize };
   loading.value = true;
 
   // 等待动画完成后
-  // setTimeout(() => {
   nextTick(() => {
     const imgDom = document.getElementById("img");
     const imgContentDom = document.getElementById("imgContent");
@@ -129,7 +136,6 @@ const handler = (val) => {
     // 获取原始图片
     getImgBlod(path)
       .then((res) => {
-        console.log("res", res);
         imgUrl.value = res;
         const newImgSize = aspectRatioToWH(
           clientWidth.value - 100,
@@ -143,13 +149,14 @@ const handler = (val) => {
         loading.value = false;
       })
       .catch((res) => {
-        //this.$message.error('图片加载失败')
-        console.log(res);
+        ElMessage({
+          message: "图片加载失败",
+          type: "error",
+          duration: 2000,
+        });
         loading.value = false;
       });
   });
-
-  // }, 800)
 };
 
 //还原位置
@@ -227,6 +234,9 @@ const handleRemoveCollection = async (item) => {
   });
 };
 
+// 设置壁纸
+const handleSetWallpaper = () => {};
+
 // 下载
 const handleDownFile = async (item = data.value) => {
   let {
@@ -299,6 +309,21 @@ const getCollection = (id) => {
     collections.findIndex((item) => id == item.id) !== -1;
   return isShow;
 };
+
+onMounted(() => {
+  const resize = () => {
+    let { height, width } = document.documentElement.getBoundingClientRect();
+    clientWidth.value = width;
+    clientHeight.value = height;
+  };
+
+  resize();
+
+  window.addEventListener("resize", resize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", resize);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -349,20 +374,16 @@ const getCollection = (id) => {
       margin: 10px 0;
       padding: 16px;
       border-radius: 50%;
-      transition: all 0.3s ease;
-      background: #0016484f;
-      cursor: url(../../assets/images/cursor.png), auto !important;
+      transition: all 0.2s;
 
       &:hover {
-        background: #38acfa;
-        color: #ffffff;
+        background-color: var(--button-hover-bg-color);
+        color: var(--button-hover-font-color);
+        border: 1px solid var(--button-hover-border-color);
       }
 
       &.shoucang {
-        color: #38acfa;
-        &:hover {
-          color: #ffffff;
-        }
+        color: var(--button-plain-font-color);
       }
     }
   }
