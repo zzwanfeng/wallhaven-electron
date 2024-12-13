@@ -6,9 +6,9 @@ const SystemPinia = SystemStore();
 
 export default function () {
   //查看
-  const handleView = (e, item) => {
+  const handleView = async (e, item) => {
     let { x, y } = e.target.getClientRects()[0]
-    this.$root.$emit("imgview", { ...item, rect: { x, y } })
+    await SystemPinia.setNowImgView({ ...item, rect: { x, y } })
   }
 
   // 添加/移除 收藏状态

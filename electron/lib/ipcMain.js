@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-03 08:47:21
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-13 17:12:48
+ * @LastEditTime: 2024-12-13 17:22:51
  * @FilePath: \wallhaven-electron\electron\lib\ipcMain.js
  * @Description: ipc通讯
  * @TODO:
@@ -214,7 +214,6 @@ const mainWindowIpcStart = function (mainWindow, createSettingWindow) {
         if (!cacheItem.notSend) {
           mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
         }
-        // !cacheItem.notSend && mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
 
 
         // 默认情况下，下载中断时下载中文件会被删除，复制文件避免删除
@@ -243,7 +242,6 @@ const mainWindowIpcStart = function (mainWindow, createSettingWindow) {
         if (!cacheItem.notSend) {
           mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)))
         }
-        // !cacheItem.notSend && mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
 
 
         if (cacheItem.state === 'completed' && cacheItem.isSetWallpaper) {
