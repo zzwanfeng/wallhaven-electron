@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-13 09:32:18
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-13 10:17:25
+ * @LastEditTime: 2024-12-13 10:54:00
  * @FilePath: \wallhaven-electron\electron\lib\window.js
  * @Description: 窗口
  * @TODO:
@@ -47,6 +47,11 @@ const createWindow = () => {
   win.removeMenu()
   win.on('closed', () => { mainWindow = null; })
   win.on('ready-to-show', () => { win.show() })
+  // // 除了 macOS 外，当所有窗口都被关闭的时候退出程序。 因此，通常对程序和它们在
+  // // 任务栏上的图标来说，应当保持活跃状态，直到用户使用 Cmd + Q 退出。
+  // app.on('window-all-closed', function () {
+  //   if (process.platform !== 'darwin') app.quit()
+  // })
 
   // 打开开发工具
   if (process.env.NODE_ENV === "development") {

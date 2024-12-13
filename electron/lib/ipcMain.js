@@ -1,3 +1,12 @@
+/*
+ * @Author: 曾志航
+ * @Date: 2024-12-03 08:47:21
+ * @LastEditors: 曾志航
+ * @LastEditTime: 2024-12-13 10:54:29
+ * @FilePath: \wallhaven-electron\electron\lib\ipcMain.js
+ * @Description: ipc通讯
+ * @TODO:
+ */
 const { app, ipcMain, session, Notification, shell, DownloadItem, dialog } = require('electron');
 const path = require("path")
 const fs = require('fs');
