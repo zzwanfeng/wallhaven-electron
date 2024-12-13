@@ -48,7 +48,7 @@
             </div>
 
             <el-progress
-              :status="img.state | state"
+              :status="state(img.state)"
               :percentage="img.progress"
             ></el-progress>
           </div>
@@ -169,11 +169,14 @@ const state = (val) => {
   if (["cancelled", "interrupted-err"].includes(val)) {
     return "exception";
   }
-  // 暂停 - 或者可恢复
-  else if (["paused", "interrupted"].includes(val)) {
-    return "warning";
-  } else if (["completed"].includes(val)) {
+  // // 暂停 - 或者可恢复
+  // else if (["paused", "interrupted"].includes(val)) {
+  //   return "warning";
+  // }
+  else if (["completed"].includes(val)) {
     return "success";
+  } else {
+    return "warning";
   }
 };
 </script>

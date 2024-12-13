@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-13 15:31:59
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-13 15:32:57
+ * @LastEditTime: 2024-12-13 16:31:12
  * @FilePath: \wallhaven-electron\src\libs\send.js
  * @Description: ipc发送消息
  * @TODO:

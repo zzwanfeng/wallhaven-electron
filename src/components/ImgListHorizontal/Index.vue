@@ -45,7 +45,7 @@
             <el-tooltip effect="light" content="设为壁纸" placement="top">
               <span
                 class="iconfont icon-zhuomian"
-                @click="handleSetWallpaper(item, true)"
+                @click="handleDownFile(item, true)"
               ></span>
             </el-tooltip>
 
@@ -126,29 +126,6 @@ const handleScroll = (type) => {
     scroll.value = Math.min(scroll.value + 400, vWidth - cWidth);
   }
 };
-
-// 设为壁纸
-const edge = require("electron-edge-js");
-var handleSetWallpaper = edge.func(`
-    using System.Threading.Tasks;
-    using System.Runtime.InteropServices;
-
-    public class Startup
-    {
-        public async Task<object> Invoke(object input)
-        {
-            string v = (string)input;
-            return SystemParametersInfo(20, 1, v, 1);
-        }
-        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
-	    public static extern int SystemParametersInfo(
-            int uAction,
-            int uParam,
-            string lpvParam,
-            int fuWinIni
-        );
-    }
-`);
 
 onMounted(() => {});
 </script>

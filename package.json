@@ -2,7 +2,7 @@
   "name": "One Wallpaper",
   "private": true,
   "version": "1.1.0",
-  "main": "Electron/Main.js",
+  "main": "electron/Main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

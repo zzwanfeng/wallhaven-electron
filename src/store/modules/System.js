@@ -62,12 +62,13 @@ export const SystemStore = defineStore('systemStore', {
       // todo  开发阶段先用缓存   后续修改
       window.localStorage.setItem('downFiles', JSON.stringify(this.downFiles))
     },
-    // 更新状态
+    // 更新 下载 状态
     setDownState (data) {
       let { id, done, progress } = data;
       let index = this.downFiles.findIndex(item => item.id === id)
       if (done === 'end') {
         if (progress === 100) {
+          console.log('progress', progress)
           let { id, path, resolution, size, small, url } = data
           this.downDoneFiles.splice(0, 0, { id, path, resolution, size, small, url, downloadtime: getTime() })
           if (index > -1) this.downFiles.splice(index, 1)
@@ -87,6 +88,7 @@ export const SystemStore = defineStore('systemStore', {
         this.downFiles = JSON.parse(getDownFiles)
       }
     },
+    // 设置已下载完成的列表
     async setDownDoneFiles (value, type) {
       if (type === 'add') {
         this.downDoneFiles.splice(0, 0, value)
@@ -96,9 +98,11 @@ export const SystemStore = defineStore('systemStore', {
           this.downDoneFiles.splice(index, 1)
         }
       }
+
       // todo  开发阶段先用缓存   后续修改
       window.localStorage.setItem('downDoneFiles', JSON.stringify(this.downDoneFiles))
     },
+    // pinia 刷新 已下载完成 列表
     restDownDoneFiles () {
       const getDownDoneFiles = window.localStorage.getItem('downDoneFiles')
       if (getDownDoneFiles) {
@@ -117,7 +121,6 @@ export const SystemStore = defineStore('systemStore', {
 
     // 设置收藏数据
     async setCollectFiles (value, type) {
-      // console.log('collectFiles', this.collectFiles)
       if (type === 'add') {
         this.collectFiles.splice(0, 0, value)
       } else {

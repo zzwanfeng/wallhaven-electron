@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-03 08:47:21
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-13 10:54:29
+ * @LastEditTime: 2024-12-13 17:12:48
  * @FilePath: \wallhaven-electron\electron\lib\ipcMain.js
  * @Description: ipc通讯
  * @TODO:
@@ -20,7 +20,7 @@ let settingWindow;
 let cacheDownItem = {}
 
 
-const mainWindowIpcStart = function (win, createSettingWindow) {
+const mainWindowIpcStart = function (mainWindow, createSettingWindow) {
   // 打开设置窗口
   ipcMain.on("open_config", () => {
     if (settingWindow) {
@@ -32,7 +32,7 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
 
   // 打开调试
   ipcMain.on("toggle_dev_tools", function (event, arg) {
-    win.webContents.toggleDevTools();
+    mainWindow.webContents.toggleDevTools();
   })
 
   // 重启
@@ -43,30 +43,30 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
 
   // 最小化
   ipcMain.on("min", function () {
-    win.minimize()
+    mainWindow.minimize()
   })
 
   // 最大化
   ipcMain.on("max", function () {
-    if (win.isMaximized()) {
-      win.unmaximize()
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
     } else {
-      win.maximize()
+      mainWindow.maximize()
     }
   })
 
-  win.on('maximize', () => {
-    win.webContents.send('mainWin-max', true)
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('mainWin-max', true)
   })
 
-  win.on('unmaximize', () => {
-    win.webContents.send('mainWin-max', false)
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('mainWin-max', false)
   })
 
   // 关闭程序
   ipcMain.on("close", function () {
     cacheDownItemClose()
-    win.close();
+    mainWindow.close();
   })
 
   // 设置下载路径
@@ -102,12 +102,11 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
 
   // 下载
   ipcMain.on("down-file", function (e, data) {
-    let { url } = data
-    if (!cacheDownItem[url]) {
-      cacheDownItem[url] = { ...data }
-      downfile(url)
-    } else {
-      /*   e.sender("down-file", "文件正在下载") */
+    let { id, url } = data
+
+    if (!cacheDownItem[id]) {
+      cacheDownItem[id] = { ...data }
+      session.defaultSession.downloadURL(url)
     }
   })
 
@@ -156,10 +155,6 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
     e.reply("down-file-resume-" + url, '已恢复下载')
   })
 
-  // 下载文件
-  const downfile = (url) => {
-    session.defaultSession.downloadURL(url)
-  }
 
   // 恢复下载
   const resumeDownload = (obj = {}) => {
@@ -176,14 +171,15 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
   session.defaultSession.on('will-download', (e, item) => {
     try {
 
-      const url = item.getURL()
-      let cacheItem = cacheDownItem[url] || {
+      const name = item.getFilename()
+      const id = name.split('-')[1].split('.')[0]
+      let cacheItem = cacheDownItem[id] || {
         notSend: true
       };
       // 获取文件的总大小
       const totalBytes = item.getTotalBytes();
       // 设置下载路径
-      const filePath = path.join(app.getPath("downloads"), item.getFilename());
+      const filePath = path.join(app.getPath("downloads"), name);
       item.setSavePath(filePath);
 
       // 缓存downitem
@@ -199,6 +195,7 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
 
       // 监听下载过程，计算并设置进度条进度
       item.on('updated', (event, state) => {
+        // 中断
         if (state === 'interrupted') {
           cacheItem.state = 'interrupted'
         } else if (state === 'progressing') {
@@ -213,7 +210,17 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
             lastBytes = offset
           }
         }
-        !cacheItem.notSend && win.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
+
+        if (!cacheItem.notSend) {
+          mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
+        }
+        // !cacheItem.notSend && mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
+
+
+        // 默认情况下，下载中断时下载中文件会被删除，复制文件避免删除
+        if (cacheItem._temp) {
+          fs.copyFileSync(cacheItem.path, cacheItem.path + '.temp')
+        }
       })
 
       // 下载完成
@@ -228,25 +235,38 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
             break;
           default:
             cacheItem.state = 'completed'
-            notification(cacheItem.path)
+            // mainWindow 禁用通知后会造成卡顿，需要用三方包提前判断 https://www.electronjs.org/zh/docs/latest/tutorial/notifications
+            // notification(cacheItem.path)
             break;
         }
 
-        !cacheItem.notSend && win.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)))
+        if (!cacheItem.notSend) {
+          mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)))
+        }
+        // !cacheItem.notSend && mainWindow.webContents.send("update-down-state", JSON.parse(JSON.stringify(cacheItem)));
+
+
+        if (cacheItem.state === 'completed' && cacheItem.isSetWallpaper) {
+          wallpaper.set(cacheItem.path).then(() => {
+            if (mainWindow) {
+              mainWindow.webContents.send('wallpaper', cacheItem)
+            }
+          })
+        }
 
         //删除缓存
-        delete cacheDownItem[url]
+        delete cacheDownItem[id]
         cacheItem = null;
         item = null;
       })
 
-      // 恢复
+      // 恢复下载
       if (item.canResume) {
         item.resume()
       }
 
     } catch (error) {
-      console.log(error)
+      console.log('error', error)
     }
   })
 
@@ -257,20 +277,35 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
       if (cacheDownItem.hasOwnProperty(key)) {
         let element = cacheDownItem[key];
         if (element._downFileItem) {
-          element._downFileItem.pause()
-          element._downFileItem = null
+          element._temp = true
+          if (element._downFileItem.isPaused()) {
+            fs.copyFileSync(element.path, element.path + '.temp')
+          } else {
+            element._downFileItem.pause()
+          }
         }
       }
     }
   }
 
-  app.on("gpu-process-crashed", function () {
+
+  // TODO
+  // app.on("gpu-process-crashed", function () {
+  //   cacheDownItemClose()
+  // })
+
+  // app.on("renderer-process-crashed", function () {
+  //   cacheDownItemClose()
+  // })
+
+  app.on("before-quit", function () {
     cacheDownItemClose()
   })
 
-  app.on("renderer-process-crashed", function () {
+  app.on("child-process-gone", function (e, details) {
     cacheDownItemClose()
   })
+
 
   let noti
   const notification = (url) => {
@@ -289,10 +324,8 @@ const mainWindowIpcStart = function (win, createSettingWindow) {
 
 
   // 设置壁纸
-  // 断点恢复下载
   ipcMain.on("set-wallpaper", function (e, data) {
     wallpaper.set(data)
-    // handle('set_wallpaper', (win, e, path) => wallpaper.set(path))
   })
 
 
