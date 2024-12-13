@@ -1,4 +1,4 @@
-import { setWallpaper } from "@/libs/send";
+// import { setWallpaper } from "@/libs/send";
 import { getTime } from "@/utils/util";
 
 export default {
@@ -39,9 +39,9 @@ export default {
         })
         if (isSetWallpaper) {
           this.$message.success("壁纸设置中...");
-          setWallpaper(path).then(() => {
-            this.$message.success("壁纸设置成功！");
-          })
+          // setWallpaper(path).then(() => {
+          //   this.$message.success("壁纸设置成功！");
+          // })
         } else {
           this.$message.success("下载成功！");
         }

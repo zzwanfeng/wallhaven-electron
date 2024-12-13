@@ -1,11 +1,13 @@
 <template>
-  <div class="layout-aside">
+  <div class="layout-aside v-flex column">
     <div class="logo">
       <img draggable="false" :src="logo" alt />
       <div>One Wallpaper</div>
+
+      <div class="version">v{{ packageConfig.version }}</div>
     </div>
 
-    <ul class="nav">
+    <ul class="nav flex-1">
       <li v-for="(item, index) in nav" :key="index">
         <div class="nav-title">{{ item.lable }}</div>
 
@@ -33,6 +35,7 @@
 
 <script setup>
 import logo from "@/assets/images/logo.svg";
+import packageConfig from "../../package.json";
 
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
@@ -140,10 +143,15 @@ const handleSelect = (i) => {
       margin-top: 30px;
       width: 120px;
     }
+
+    .version {
+      font-size: 12px;
+    }
   }
 
   .nav {
     padding: 20px 30px;
+    overflow: auto;
     user-select: none;
     /*  -webkit-app-region: no-drag; */
 

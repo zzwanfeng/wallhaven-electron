@@ -69,8 +69,6 @@ import ThemeDialog from "./components/Theme";
 import AboutDialog from "./components/About";
 import LogDialog from "./components/Log";
 
-import { openConfig } from "@/libs/send";
-import { minWindow } from "@/utils/ipcRenderer";
 import { useRouter } from "vue-router";
 import { toRaw } from "vue";
 
@@ -142,7 +140,6 @@ const handleNavClick = (item) => {
   popover.value.doToggle();
 
   if (item.type === "set") {
-    // openConfig();
     router.push({
       name: "setting",
       query: {},

@@ -15,11 +15,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: 'Segoe UI',Tahoma, Geneva, Verdana,sans-serif,Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif, Helvetica Neue,
+    Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
   font-size: 14px;
   overflow: hidden;
 }
-
 
 img {
   cursor: url(../assets/images/img-cursor.png), auto !important;
@@ -95,17 +95,9 @@ div:focus {
     flex-direction: column;
   }
 
-	&.wrap{
-		flex-wrap: wrap;
-	}
-
   &.wrap {
     flex-wrap: wrap;
   }
-
-	&.jsa {
-		justify-content: space-around;
-	}
 
   &.jsb {
     justify-content: space-between;
@@ -115,12 +107,16 @@ div:focus {
     justify-content: center;
   }
 
-	&.jss {
-		justify-content: flex-start;
-	}
+  &.jse {
+    justify-content: flex-end;
+  }
 
   &.aic {
     align-items: center;
+  }
+
+  &.aie {
+    align-items: flex-end;
   }
 
   .content {
@@ -163,20 +159,20 @@ div:focus {
   overflow: hidden;
 }
 
-.w100{
-	width: 100%;
+.w100 {
+  width: 100%;
 }
 
-.h100{
-	height: 100%;
+.h100 {
+  height: 100%;
 }
 
-.m0{
-	margin: 0;
+.m0 {
+  margin: 0;
 }
 
-.p0{
-	padding: 0!important;
+.p0 {
+  padding: 0 !important;
 }
 
 .mgl10 {
@@ -187,6 +183,6 @@ div:focus {
   margin-right: 10px;
 }
 
-.cursor-pointer{
-	cursor: pointer;
+.cursor-pointer {
+  cursor: pointer;
 }

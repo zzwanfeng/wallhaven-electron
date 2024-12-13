@@ -1,13 +1,26 @@
 const { app, ipcMain, session, Notification, shell, DownloadItem, dialog } = require('electron');
 const path = require("path")
 const fs = require('fs');
+const wallpaper = require('wallpaper');
+// 设置窗口
+let settingWindow;
+
 
 
 //缓存下载项
 let cacheDownItem = {}
 
 
-const mainWindowIpcStart = function (win) {
+const mainWindowIpcStart = function (win, createSettingWindow) {
+  // 打开设置窗口
+  ipcMain.on("open_config", () => {
+    if (settingWindow) {
+      settingWindow.show()
+    } else {
+      settingWindow = createSettingWindow()
+    }
+  })
+
   // 打开调试
   ipcMain.on("toggle_dev_tools", function (event, arg) {
     win.webContents.toggleDevTools();
@@ -265,6 +278,13 @@ const mainWindowIpcStart = function (win) {
 
   }
 
+
+  // 设置壁纸
+  // 断点恢复下载
+  ipcMain.on("set-wallpaper", function (e, data) {
+    wallpaper.set(data)
+    // handle('set_wallpaper', (win, e, path) => wallpaper.set(path))
+  })
 
 
   // // ipcMain接收消息

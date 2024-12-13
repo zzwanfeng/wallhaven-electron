@@ -1,7 +1,7 @@
 {
-  "name": "electron-desktop",
+  "name": "One Wallpaper",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.1.0",
   "main": "Electron/Main.js",
   "scripts": {
     "dev": "vite",
