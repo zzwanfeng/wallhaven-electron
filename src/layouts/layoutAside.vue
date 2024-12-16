@@ -56,17 +56,23 @@ const nav = [
         cname: "hotPage",
       },
       {
-        id: "acg",
-        lable: "动漫精选",
-        cname: "acgPage",
+        id: "onlineWallpaper",
+        lable: "在线壁纸",
+        cname: "onlineWallpaperPage",
         icon: "icon-erciyuan",
       },
-      {
-        id: "people",
-        lable: "人物精选",
-        icon: "icon-meinv",
-        cname: "peoplePage",
-      },
+      // {
+      //   id: "acg",
+      //   lable: "动漫精选",
+      //   cname: "acgPage",
+      //   icon: "icon-erciyuan",
+      // },
+      // {
+      //   id: "people",
+      //   lable: "人物精选",
+      //   icon: "icon-meinv",
+      //   cname: "peoplePage",
+      // },
     ],
   },
   {

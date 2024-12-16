@@ -27,6 +27,14 @@ export const routes = [
         component: () => import("@/views/wallhaven/hotPage/Index.vue")
       },
       {
+        path: "/onlineWallpaperPage",
+        name: "onlineWallpaperPage",
+        meta: {
+          title: "推荐",
+        },
+        component: () => import("@/views/wallhaven/onlineWallpaperPage/Index.vue")
+      },
+      {
         path: "/acgPage",
         name: "acgPage",
         meta: {

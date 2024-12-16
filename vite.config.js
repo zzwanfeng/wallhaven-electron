@@ -38,7 +38,11 @@ export default defineConfig({
     },
   },
   plugins: [
-    vue(),
+    vue({
+      script: {
+        defineModel: true,
+      },
+    }),
     commonjs(),
     AutoImport({
       // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等

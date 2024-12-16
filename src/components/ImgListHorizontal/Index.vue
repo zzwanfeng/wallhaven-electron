@@ -1,3 +1,12 @@
+<!--
+ * @Author: 曾志航
+ * @Date: 2024-12-11 09:13:13
+ * @LastEditors: 曾志航
+ * @LastEditTime: 2024-12-16 14:06:38
+ * @FilePath: \wallhaven-electron\src\components\ImgListHorizontal\Index.vue
+ * @Description: 图片列表  瀑布流模式
+ * @TODO:
+-->
 <template>
   <div ref="imgListHorizontal" class="img-list-horizontal">
     <div class="img-list-left" @click="handleScroll('left')"></div>
