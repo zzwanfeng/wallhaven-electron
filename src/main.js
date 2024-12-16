@@ -19,7 +19,7 @@ initPath()
 
 const app = createApp(App)
 initDirective(app)
-app.use(ElementPlus).use(store).use(router)
+app.use(store).use(ElementPlus).use(router)
 
 // 现在所有的导航都是异步的，等路由ready以后再进行挂载组件；
 router.isReady().then(() => app.mount('#app'))

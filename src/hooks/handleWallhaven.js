@@ -2,9 +2,10 @@ import { SystemStore } from "@/store/modules/System";
 import { getTime } from "@/utils/util";
 // import { setWallpaper } from "@/libs/send";
 
-const SystemPinia = SystemStore();
 
 export default function () {
+  const SystemPinia = SystemStore();
+
   //查看
   const handleView = async (e, item) => {
     let { x, y } = e.target.getClientRects()[0]
@@ -39,7 +40,8 @@ export default function () {
   }
 
   // 下载、设置壁纸
-  const handleDownFile = async (item, isSetWallpaper = false) => {
+  const handleDownFile = async (data, isSetWallpaper = false) => {
+    const item = JSON.parse(JSON.stringify(data)) || {}
     let { id, path: url, file_size: size, resolution, thumbs: { small } } = item;
 
     if (/^blob:/.test(url)) {

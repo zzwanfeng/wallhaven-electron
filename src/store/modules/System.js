@@ -68,7 +68,7 @@ export const SystemStore = defineStore('systemStore', {
       let index = this.downFiles.findIndex(item => item.id === id)
       if (done === 'end') {
         if (progress === 100) {
-          console.log('progress', progress)
+          // console.log('progress', progress)
           let { id, path, resolution, size, small, url } = data
           this.downDoneFiles.splice(0, 0, { id, path, resolution, size, small, url, downloadtime: getTime() })
           if (index > -1) this.downFiles.splice(index, 1)

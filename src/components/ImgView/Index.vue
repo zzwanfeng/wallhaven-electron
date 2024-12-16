@@ -1,3 +1,12 @@
+<!--
+ * @Author: 曾志航
+ * @Date: 2024-12-03 08:47:21
+ * @LastEditors: 曾志航
+ * @LastEditTime: 2024-12-16 10:31:31
+ * @FilePath: \wallhaven-electron\src\components\ImgView\Index.vue
+ * @Description: 图片预览
+ * @TODO: 监听是否预览 更换为 组件通信
+-->
 <template>
   <transition name="slide">
     <div v-if="show" class="animation-content">
@@ -8,6 +17,7 @@
         element-loading-text="加载中..."
       >
         <img
+          v-show="!loading"
           @error="loading ? '' : handleError"
           ref="imgRef"
           draggable="false"
@@ -35,26 +45,26 @@
         <div
           title="下载"
           class="button-default iconfont icon-xiazai"
-          @click="handleDownFile()"
+          @click="handleDownFile(data)"
         ></div>
 
         <div
           title="设为壁纸"
           class="button-default iconfont icon-zhuomian"
-          @click="() => handleSetWallpaper(item, true)"
+          @click="handleDownFile(data, true)"
         ></div>
 
         <div
           title="取消收藏"
           v-if="getCollection(data.id)"
-          @click="handleRemoveCollection(data)"
+          @click="handleSetCollection(data, 'remove')"
           class="button-default iconfont icon-collection-b shoucang"
         ></div>
 
         <div
           title="收藏"
           v-else
-          @click="handleAddCollection(data)"
+          @click="handleSetCollection(data, 'add')"
           class="button-default iconfont icon-collection-b"
         ></div>
       </div>
@@ -63,13 +73,18 @@
 </template>
 
 <script setup>
+import handleWallhaven from "@/hooks/handleWallhaven";
+import errimg from "@/assets/images/errimg.svg";
+
 import { aspectRatioToWH } from "@/utils/util";
 import { getTime } from "@/utils/util";
 import { getImgBlod } from "@/utils/util";
-import errimg from "@/assets/images/errimg.svg";
 import { ElMessage } from "element-plus";
 import { SystemStore } from "@/store/modules/System";
+
 const SystemPinia = SystemStore();
+const { getCollection, handleSetCollection, handleDownFile } =
+  handleWallhaven();
 
 // 页面loading
 let loading = ref(false);
@@ -94,11 +109,16 @@ let minImg = ref({});
 let data = ref({});
 const imgRef = ref("imgRef");
 const imgContentRef = ref("imgContentRef");
+const resize = ref();
 
 // 监听是否预览
 SystemPinia.$subscribe(
   (mutation, state) => {
     if (state?.nowImgView?.url) {
+      if (!!state.nowImgView.id && state.nowImgView.id === data.value.id) {
+        return;
+      }
+
       data.value = state.nowImgView;
 
       init(data.value);
@@ -225,12 +245,11 @@ const setImgWH = (e) => {
       height = minImg.value.height;
     }
 
-    imgStyle.value.width = width + "px";
-    imgStyle.value.height = height + "px";
-
-    imgRef.value.style.transform = `translate(${oX - width / 2}px, ${
-      oY - height / 2
-    }px)`;
+    imgStyle.value = {
+      width: width + "px",
+      height: height + "px",
+      transform: `translate(${oX - width / 2}px, ${oY - height / 2}px)`,
+    };
 
     zoom.value = parseInt((width / originalW.value) * 100);
   }
@@ -240,118 +259,25 @@ const setImgWH = (e) => {
 const handleClose = async () => {
   show.value = false;
   await SystemPinia.setNowImgView(null);
-};
 
-// 添加收藏
-const handleAddCollection = async (item) => {
-  await SystemPinia.setCollectFiles(item, "add");
-
-  ElMessage({
-    message: "收藏成功",
-    type: "success",
-    duration: 2000,
-  });
-};
-
-// 移除收藏
-const handleRemoveCollection = async (item) => {
-  await SystemPinia.setCollectFiles(item, "remove");
-  ElMessage({
-    message: "取消收藏",
-    type: "success",
-    duration: 2000,
-  });
-};
-
-// 设置壁纸
-const handleSetWallpaper = () => {};
-
-// 下载
-const handleDownFile = async (item = data.value) => {
-  let {
-    id,
-    path: url,
-    file_size: size,
-    resolution,
-    thumbs: { small },
-  } = item;
-
-  // if (/^blob:/.test(imgUrl.value)) {
-  //  // 方法一 ()这个方法还没处理 下载管理的数据 暂时不用)
-  //   setTimeout(async () => {
-  //     const a = document.createElement('a')
-  //     a.href = imgUrl.value
-  //     a.download = `one-${id}${url.substr(url.lastIndexOf('.'))}`
-  //     a.click()
-  //     setTimeout(() => {
-  //       URL.revokeObjectURL(a.href)
-  //       a.remove()
-  //     }, 3000)
-
-  //     SystemPinia.setDownDoneFiles(
-  //       {
-  //         id,
-  //         resolution,
-  //         size,
-  //         small,
-  //         url,
-  //         downloadtime: getTime(),
-  //       },
-  //       'add'
-  //     )
-  //   }, 3000)
-
-  //   ElMessage({
-  //     message: '下载成功',
-  //     type: 'success',
-  //     duration: 2000,
-  //   })
-  // } else {
-  // 方法二
-  let obj = JSON.parse(
-    JSON.stringify({
-      id,
-      url,
-      size,
-      resolution,
-      small,
-      _img: item,
-    })
-  );
-  setTimeout(async () => {
-    await SystemPinia.setDownFiles(obj);
-  }, 1000);
-
-  ElMessage({
-    message: "已加入下载",
-    type: "success",
-    duration: 2000,
-  });
-  // }
-};
-
-// 获取收藏状态
-const getCollection = (id) => {
-  let collections = SystemPinia?.getAllCollectFiles ?? [];
-  const isShow =
-    collections.length > 0 &&
-    collections.findIndex((item) => id == item.id) !== -1;
-  return isShow;
+  window.removeEventListener("resize", resize.value);
+  data.value = {};
 };
 
 onMounted(() => {
-  const resize = () => {
+  resize.value = () => {
     let { height, width } = document.documentElement.getBoundingClientRect();
     clientWidth.value = width;
     clientHeight.value = height;
   };
 
-  resize();
+  resize.value();
 
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", resize.value);
 });
 onUnmounted(() => {
-  window.removeEventListener("resize", resize);
+  window.removeEventListener("resize", resize.value);
+  data.value = {};
 });
 </script>
 
@@ -412,7 +338,7 @@ onUnmounted(() => {
       }
 
       &.shoucang {
-        color: var(--button-plain-font-color);
+        color: var(--button-plain-font-active-color);
       }
     }
   }
