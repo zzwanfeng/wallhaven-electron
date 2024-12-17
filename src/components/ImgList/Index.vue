@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-03 08:47:21
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-16 15:46:36
+ * @LastEditTime: 2024-12-17 14:12:05
  * @FilePath: \wallhaven-electron\src\components\ImgList\Index.vue
  * @Description: 图片列表 水平模式
  * @TODO:
@@ -191,7 +191,7 @@ const init = () => {
   }, 50);
 };
 // 重置
-const reset = (column) => {
+const handleReset = (column) => {
   catchList.value = [];
   catchKeys.value = {};
   sumHeight.value = toTwoDimensionalArray(column, 0);
@@ -370,7 +370,7 @@ const resetLayout = () => {
 // 添加数据
 const add = (imgs, reset = false) => {
   if (reset) {
-    reset(column.value);
+    handleReset(column.value);
   }
 
   const newImgs = [];
@@ -446,7 +446,7 @@ onMounted(() => {
   }, 300);
   const resizeObserver = new ResizeObserver((e) => observer(e));
   column.value = updateVisibleContainerInfo(visibleContainer.value);
-  reset(column.value);
+  handleReset(column.value);
   visibleContainer.value.addEventListener("scroll", handlerScroll);
   // this.$once("hook:beforeDestroy", () => {
   //   visibleContainer.removeEventListener("scroll", this.handlerScroll);
@@ -466,6 +466,7 @@ onUnmounted(() => {
 
 defineExpose({
   add,
+  handleReset,
 });
 </script>
 

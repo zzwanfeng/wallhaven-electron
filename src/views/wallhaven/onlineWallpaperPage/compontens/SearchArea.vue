@@ -4,13 +4,11 @@
       <div class="search-more-wrapper">
         <div class="search-input">
           <FormInput type="text" placeholder="搜索..." v-model="search.q">
-            <div
-              slot="append"
-              @click="handleSearch"
-              class="search-btn pl10 pr10"
-            >
-              <i class="iconfont icon-mohuchaxun"></i>
-            </div>
+            <template v-slot:append>
+              <div @click="handleSearch" class="search-btn pl10 pr10">
+                <i class="iconfont icon-mohuchaxun"></i>
+              </div>
+            </template>
           </FormInput>
         </div>
 
@@ -20,8 +18,6 @@
         </div>
       </div>
 
-      {{ search.categories }}--
-      <!-- v-model:checked="search.categories" -->
       <FormCheckboxRadio
         label="分类"
         v-model="search.categories"
@@ -73,8 +69,7 @@
           :list="colorsList"
           type="radio"
         >
-          <!-- <template #default="{ color }"> -->
-          <template #color>
+          <template #default="{ color }">
             <template v-if="color === ''">
               <div class="color-item transparent"></div>
             </template>
@@ -122,7 +117,6 @@
 </template>
 
 <script setup>
-import { nextTick, toRaw } from "vue";
 import {
   purityList,
   stypeList,
@@ -164,8 +158,11 @@ const handleSearch = () => {
 };
 // 搜索筛选数据
 const getSearch = () => {
-  if (search.value.purity.length === 0) {
-    search.value.purity = ["SFW"];
+  const returnSearch = JSON.parse(JSON.stringify(search.value));
+  if (returnSearch.purity.length === 0) {
+    returnSearch.purity = ["SFW"];
+  } else {
+    returnSearch.purity = returnSearch.purity.join(",");
   }
 
   let {
@@ -175,23 +172,23 @@ const getSearch = () => {
   } = resolution.value;
 
   if (type === "atleast") {
-    search.value.atleast = value;
+    returnSearch.atleast = value;
     if (/^[0-9]{1,}$/.test(width) && /^[0-9]{1,}$/.test(height)) {
-      search.value.atleast = `${width}x${height}`;
+      returnSearch.atleast = `${width}x${height}`;
     }
   } else if (type === "resolutions") {
-    search.value.resolutions = "";
+    returnSearch.resolutions = "";
     if (/^[0-9]{1,}$/.test(width) && /^[0-9]{1,}$/.test(height)) {
-      search.value.resolutions = `${width}x${height},`;
+      returnSearch.resolutions = `${width}x${height},`;
     }
-    search.value.resolutions += value.join(",");
+    returnSearch.resolutions += value.join(",");
   }
 
   if (Array.isArray(search.value.ratios)) {
-    search.value.ratios = search.value.ratios.join(",");
+    returnSearch.ratios = returnSearch.ratios.join(",");
   }
 
-  return { ...search.value };
+  return { ...returnSearch };
 };
 
 defineExpose({

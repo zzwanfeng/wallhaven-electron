@@ -171,16 +171,24 @@ div:focus {
   margin: 0;
 }
 
-.p0 {
-  padding: 0 !important;
-}
-
 .mgl10 {
   margin-left: 10px;
 }
 
 .mgr10 {
   margin-right: 10px;
+}
+
+.p0 {
+  padding: 0 !important;
+}
+
+.pl10 {
+  padding-left: 10px !important;
+}
+
+.pr10 {
+  padding-right: 10px !important;
 }
 
 .cursor-pointer {

@@ -57,7 +57,8 @@ const getlist = (reset = false) => {
     let search = searchAreaRef.value.getSearch();
 
     const params = {
-      ...objToUrl(search),
+      // ...objToUrl(search),
+      ...search,
       page: page.value++,
     };
 
@@ -65,6 +66,9 @@ const getlist = (reset = false) => {
     // if (apikey) {
     //   params.apikey = apikey;
     // }
+
+    skeleton.value = true;
+    imglist.value.handleReset(3);
 
     wallhavenSearch(params)
       .then((res) => {
@@ -79,9 +83,10 @@ const getlist = (reset = false) => {
 
         resolve();
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("err", err);
         skeleton.value = false;
-        reject();
+        reject(err);
       });
   });
 };

@@ -66,18 +66,16 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 
-// model: {
-//   prop: "checked",
-//   event: "change",
-// },
 watch(
   () => props.type,
   (newValue, oldValue) => {
     if (newValue) {
       if (newValue === "radio") {
-        emit("change", "");
+        // emit("change", "");
+        model.value = "";
       } else {
-        emit("change", []);
+        model.value = [];
+        // emit("change", []);
       }
     }
   }
@@ -87,13 +85,12 @@ const isChecked = (item) => {
   let val = item.value === undefined ? item : item.value;
 
   if (props.type === "radio") {
-    console.log("model", model);
-    return props.checked.toString() === val.toString();
+    return model.value.toString() === val.toString();
   } else {
-    let len = props.checked.length;
+    let len = model.value.length;
     return len === 0
       ? false
-      : props.checked.findIndex((item) => item === val) > -1;
+      : model.value.findIndex((item) => item === val) > -1;
   }
 };
 
@@ -101,15 +98,16 @@ const handleClick = (item) => {
   let val = item.value === undefined ? item : item.value;
 
   if (props.type === "radio") {
-    console.log("1111");
+    model.value = val;
     // emit("change", val);
-    emit("update:modelValue", val);
+    // emit("update:modelValue", val);
   } else {
-    let vals = props.checked.filter((v) => v !== val);
-    if (vals.length === props.checked.length) {
+    let vals = model.value.filter((v) => v !== val);
+    if (vals.length === model.value.length) {
       vals.push(val);
     }
-    emit("change", vals);
+    model.value = vals;
+    // emit("change", vals);
   }
 };
 </script>

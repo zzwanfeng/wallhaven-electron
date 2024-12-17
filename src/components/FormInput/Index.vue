@@ -9,31 +9,34 @@
     <div class="input-prepend" v-if="$slots.prepend">
       <slot name="prepend"></slot>
     </div>
+
     <input
       :type="type"
       :placeholder="placeholder"
       @input="$emit('input', $event.target.value)"
     />
+
     <div class="input-append" v-if="$slots.append">
       <slot name="append"></slot>
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: "FormInput",
-  props: {
-    type: {
-      type: String,
-      default: "text",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
+
+<script setup>
+const model = defineModel();
+
+const props = defineProps({
+  type: {
+    type: String,
+    default: "text",
   },
-};
+  placeholder: {
+    type: String,
+    default: "",
+  },
+});
 </script>
+
 <style lang="scss" scoped>
 .input {
   display: flex;
