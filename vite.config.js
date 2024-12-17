@@ -39,7 +39,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    commonjs(),
+    // commonjs(),
     AutoImport({
       // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
       imports: ['vue', 'vue-router'],

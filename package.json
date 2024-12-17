@@ -1,5 +1,5 @@
 {
-  "name": "One Wallpaper",
+  "name": "one-wallpaper",
   "private": true,
   "version": "1.1.0",
   "main": "electron/Main.js",
@@ -46,28 +46,28 @@
   },
   "build": {
     "appId": "com.my-website.my-app",
-    "productName": "WallpaperZz App",
+    "productName": "one-wallhaven",
     "copyright": "Copyright © 2021 kuari",
     "mac": {
       "category": "public.app-category.utilities",
-      "icon": "./src/assets/logo.ico"
+      "icon": "./electron/icon/logo256x256.ico"
     },
     "win": {
-      "icon": "./src/assets/logo.ico"
+      "icon": "./electron/icon/logo256x256.ico"
     },
     "linux": {
-      "icon": "./src/assets/logo.ico"
+        "icon": "./electron/icon/logo256x256.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./src/assets/logo.ico",
-      "uninstallerIcon": "./src/assets/logo.ico",
-      "installerHeaderIcon": "./src/assets/logo.ico"
+      "installerIcon": "./electron/icon/logo256x256.ico",
+      "uninstallerIcon": "./electron/icon/logo256x256.ico",
+      "installerHeaderIcon": "./electron/icon/logo256x256.ico"
     },
     "files": [
       "dist/**/*",
-      "Electron/**/*"
+      "electron/**/*"
     ],
     "directories": {
       "buildResources": "assets",

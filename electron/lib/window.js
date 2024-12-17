@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-13 09:32:18
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-13 10:54:00
+ * @LastEditTime: 2024-12-17 15:41:36
  * @FilePath: \wallhaven-electron\electron\lib\window.js
  * @Description: 窗口
  * @TODO:
@@ -11,6 +11,12 @@ const { BrowserWindow, Tray, Menu, } = require('electron')
 const path = require('path')
 //应用运行时的标题栏图标
 const iconPath = path.join(__dirname, '../icon/logo.ico')
+
+const getURL = (url) => require('url').format({
+  protocol: 'file',
+  slashes: true,
+  pathname: path.resolve(__dirname, "../../dist/", url)
+})
 
 // 主窗口
 const createWindow = () => {
@@ -40,8 +46,9 @@ const createWindow = () => {
   win.loadURL(
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:5173'
-      : path.resolve(__dirname, '../dist/index.html')
+      : path.resolve(__dirname, '../../dist/index.html')
   );
+  // win.loadURL(getURL('index.html'))
 
   // 去掉菜单栏
   win.removeMenu()
