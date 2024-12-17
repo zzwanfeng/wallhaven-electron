@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-13 09:32:18
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-17 15:41:36
+ * @LastEditTime: 2024-12-17 15:48:45
  * @FilePath: \wallhaven-electron\electron\lib\window.js
  * @Description: 窗口
  * @TODO:
@@ -93,7 +93,7 @@ const createSettingWindow = () => {
   win.loadURL(
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:5173/config.html'
-      : path.resolve(__dirname, '../dist/config.html')
+      : path.resolve(__dirname, '../../dist/config.html')
   );
 
   // 去掉菜单栏

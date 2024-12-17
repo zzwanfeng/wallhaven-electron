@@ -85,11 +85,11 @@ const navs = ref([
     type: "theme",
     icon: "icon-a-huaban2fuben9",
   },
-  {
-    title: "设置",
-    type: "set",
-    icon: "icon-shezhi",
-  },
+  // {
+  //   title: "设置",
+  //   type: "set",
+  //   icon: "icon-shezhi",
+  // },
   {
     title: "日志",
     type: "log",

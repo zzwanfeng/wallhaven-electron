@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-03 08:47:21
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-17 14:12:05
+ * @LastEditTime: 2024-12-17 16:30:46
  * @FilePath: \wallhaven-electron\src\components\ImgList\Index.vue
  * @Description: 图片列表 水平模式
  * @TODO:
@@ -149,6 +149,7 @@ const isAnimate = ref(false);
 const previewMode = ref();
 // 更新滚动
 const updateScrollTop = ref();
+const resizeObserver = ref();
 
 const emit = defineEmits(["loadMore"]);
 
@@ -347,24 +348,24 @@ const updateVisibleList = () => {
 const resetLayout = () => {
   sumHeight.value = toTwoDimensionalArray(column.value, 0);
 
-  const { width, gap, sumHeight } = this;
   catchList.value.forEach((img) => {
-    let minIndex = minValIndex(sumHeight);
+    let minIndex = minValIndex(sumHeight.value);
 
-    img._top = sumHeight[minIndex];
+    img._top = sumHeight.value[minIndex];
     img.style = {
       width: img.thumbs_width + "px",
       height: img.thumbs_height + 40 + "px",
-      transform: `translate(${minIndex * (width + gap)}px, ${
-        sumHeight[minIndex]
+      transform: `translate(${minIndex * (width.value + gap.value)}px, ${
+        sumHeight.value[minIndex]
       }px)`,
     };
 
-    sumHeight[minIndex] = sumHeight[minIndex] + img.thumbs_height + gap + 40;
+    sumHeight.value[minIndex] =
+      sumHeight.value[minIndex] + img.thumbs_height + gap.value + 40;
   });
 
   isAnimate.value = true;
-  placeholderHeight.value = maxVal(sumHeight);
+  placeholderHeight.value = maxVal(sumHeight.value);
 };
 
 // 添加数据
@@ -444,24 +445,21 @@ onMounted(() => {
       resetLayout();
     }
   }, 300);
-  const resizeObserver = new ResizeObserver((e) => observer(e));
+  resizeObserver.value = new ResizeObserver((e) => observer(e));
   column.value = updateVisibleContainerInfo(visibleContainer.value);
   handleReset(column.value);
   visibleContainer.value.addEventListener("scroll", handlerScroll);
-  // this.$once("hook:beforeDestroy", () => {
-  //   visibleContainer.removeEventListener("scroll", this.handlerScroll);
-  //   resizeObserver.disconnect();
-  // });
-  // this.$on("hook:activated", () => {
-  //   resizeObserver.observe(visibleContainer);
-  //   this.$refs.visibleContainer.scrollTop = this.scrollTop;
-  // });
-  // this.$on("hook:deactivated", () => {
-  //   resizeObserver.unobserve(visibleContainer);
-  // });
+
+  resizeObserver.value.observe(visibleContainer.value);
+  visibleContainer.value.scrollTop = scrollTop.value;
 });
-onUnmounted(() => {
-  console.log("onUnmounted");
+onUnmounted(() => {});
+onBeforeUnmount(() => {
+  if (visibleContainer.value && visibleContainer.value.removeEventListener) {
+    visibleContainer.value.removeEventListener("scroll", handlerScroll);
+    resizeObserver.value.disconnect();
+    resizeObserver.value.unobserve(visibleContainer.value);
+  }
 });
 
 defineExpose({

@@ -95,12 +95,12 @@ const nav = [
   {
     lable: "更多",
     childer: [
-      {
-        id: "setting",
-        lable: "设置",
-        cname: "setting",
-        icon: "icon-guanyu",
-      },
+      // {
+      //   id: "setting",
+      //   lable: "设置",
+      //   cname: "setting",
+      //   icon: "icon-guanyu",
+      // },
       {
         id: "updateLog",
         lable: "更新日志",
