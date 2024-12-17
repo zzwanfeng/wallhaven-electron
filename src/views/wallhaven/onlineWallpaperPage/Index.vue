@@ -68,7 +68,6 @@ const getlist = (reset = false) => {
     // }
 
     skeleton.value = true;
-    imglist.value.handleReset(3);
 
     wallhavenSearch(params)
       .then((res) => {

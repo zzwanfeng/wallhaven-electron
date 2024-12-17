@@ -2,7 +2,7 @@
  * @Author: 曾志航
  * @Date: 2024-12-03 08:47:21
  * @LastEditors: 曾志航
- * @LastEditTime: 2024-12-17 16:30:46
+ * @LastEditTime: 2024-12-17 17:03:35
  * @FilePath: \wallhaven-electron\src\components\ImgList\Index.vue
  * @Description: 图片列表 水平模式
  * @TODO:
@@ -39,12 +39,14 @@
               @click="handleView($event, item)"
             >
               <img-plus :src="item.original"></img-plus>
+
               <div class="img-info">
                 <span>{{ byte(item.file_size) }}</span>
                 <span>{{ item.resolution }}</span>
                 <span>{{ item.file_type }}</span>
               </div>
             </div>
+
             <div class="desc">
               <span
                 title="取消收藏"
@@ -53,6 +55,7 @@
                 @click="handleRemoveCollection(item)"
                 class="iconfont icon-collection-b shoucang"
               ></span>
+
               <span
                 title="收藏"
                 :key="item.id + 'cx'"
@@ -60,11 +63,13 @@
                 @click="handleAddCollection(item)"
                 class="iconfont icon-collection-b"
               ></span>
+
               <span
                 title="设为壁纸"
                 class="iconfont icon-zhuomian"
                 @click="handleDownFile(item, true)"
               ></span>
+
               <span
                 title="下载"
                 class="iconfont icon-xiazai"
@@ -420,8 +425,8 @@ const handlerScroll = (e) => {
   updateScrollTop.value(scrollTop);
 };
 
-onMounted(() => {
-  init();
+onMounted(async () => {
+  await init();
   // // 预览模式
   // this.previewMode = this.mode || this.$store.appConfig.get("previewMode");
   // 3
